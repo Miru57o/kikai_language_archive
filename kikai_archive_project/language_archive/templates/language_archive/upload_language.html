@@ -1,0 +1,218 @@
+{% extends 'language_archive/base.html' %}
+
+{% block title %}言語記録アップロード - 喜界島言語アーカイブ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-upload-area {
+        border: 3px dashed var(--secondary-color);
+        border-radius: 12px;
+        padding: 3rem;
+        text-align: center;
+        background: rgba(151, 192, 92, 0.05);
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+        background: rgba(151, 192, 92, 0.1);
+        border-color: var(--primary-color);
+    }
+
+    .file-upload-area.dragover {
+        background: rgba(151, 192, 92, 0.2);
+        border-color: var(--accent-color);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .required-label::after {
+        content: " *";
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3"><i class="fas fa-upload"></i> 言語記録のアップロード</h1>
+            <p class="lead">喜界語の音声・映像データを登録します。</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="upload-section">
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+
+                    <!-- ファイル選択 -->
+                    <div class="mb-4">
+                        <label class="form-label required-label">
+                            <i class="fas fa-file-upload"></i> ファイル
+                        </label>
+                        <div class="file-upload-area" id="fileUploadArea"
+                            onclick="document.getElementById('id_file').click()">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <p class="mb-2"><strong>クリックしてファイルを選択</strong></p>
+                            <p class="small text-muted">または、ここにファイルをドラッグ＆ドロップ</p>
+                            <p class="small text-muted">対応形式: 音声(mp3, wav), 映像(mp4, mov), 画像(jpg, png)</p>
+                        </div>
+                        <input type="file" name="file" id="id_file" class="d-none" required>
+                        <div id="fileInfo" class="mt-2"></div>
+                    </div>
+
+                    <!-- 基本情報 -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.title.id_for_label }}" class="form-label required-label">タイトル</label>
+                            {{ form.title }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.file_type.id_for_label }}"
+                                class="form-label required-label">ファイル種類</label>
+                            {{ form.file_type }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.onomatopoeia_text.id_for_label }}"
+                            class="form-label required-label">オノマトペ</label>
+                        {{ form.onomatopoeia_text }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.meaning.id_for_label }}" class="form-label required-label">意味</label>
+                        {{ form.meaning }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.usage_example.id_for_label }}" class="form-label required-label">用例</label>
+                        {{ form.usage_example }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.phonetic_notation.id_for_label }}" class="form-label">音声記号（オプション）</label>
+                        {{ form.phonetic_notation }}
+                        <small class="form-text text-muted">IPA表記などを記入してください</small>
+                    </div>
+
+                    <!-- 関連情報 -->
+                    <h5 class="mt-4 mb-3">関連情報</h5>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.village.id_for_label }}" class="form-label required-label">集落</label>
+                            {{ form.village }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.speaker.id_for_label }}" class="form-label">話者</label>
+                            {{ form.speaker }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.onomatopoeia_type.id_for_label }}" class="form-label">オノマトペ型</label>
+                            {{ form.onomatopoeia_type }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.recorded_date.id_for_label }}"
+                                class="form-label required-label">収録日</label>
+                            {{ form.recorded_date }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">備考（オプション）</label>
+                        {{ form.notes }}
+                    </div>
+
+                    <!-- 送信ボタン -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload"></i> アップロード
+                        </button>
+                        <a href="{% url 'record_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> キャンセル
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ファイル選択の処理
+    const fileInput = document.getElementById('id_file');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInfo = document.getElementById('fileInfo');
+
+    // ファイル選択時
+    fileInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            displayFileInfo(file);
+        }
+    });
+
+    // ドラッグ＆ドロップ
+    fileUploadArea.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    fileUploadArea.addEventListener('dragleave', function (e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+
+    fileUploadArea.addEventListener('drop', function (e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            fileInput.files = e.dataTransfer.files;
+            displayFileInfo(file);
+        }
+    });
+
+    // ファイル情報を表示
+    function displayFileInfo(file) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        fileInfo.innerHTML = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <strong>${file.name}</strong> (${sizeMB} MB)
+            </div>
+        `;
+
+        // ファイルアップロードエリアのスタイルを変更
+        fileUploadArea.style.background = 'rgba(40, 167, 69, 0.1)';
+        fileUploadArea.style.borderColor = '#28a745';
+    }
+
+    // フォーム送信時のローディング
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>アップロード中...';
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'language_archive/base.html' %}
+
+{% block title %}{{ record.onomatopoeia_text }} - 言語記録詳細{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .media-container {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .media-container audio,
+    .media-container video,
+    .media-container img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">ホーム</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'record_list' %}">言語記録一覧</a></li>
+                    <li class="breadcrumb-item active">{{ record.onomatopoeia_text }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="detail-card card mb-4">
+                <div class="card-body">
+                    <h1 class="mb-2">{{ record.onomatopoeia_text }}</h1>
+                    <h5 class="text-muted mb-4">{{ record.title }}</h5>
+
+                    <!-- メディアファイル -->
+                    <div class="media-container">
+                        {% if record.file_type == 'audio' %}
+                        <audio controls>
+                            <source src="{{ record.file_path }}">
+                            お使いのブラウザは audio タグに対応していません。
+                        </audio>
+                        {% elif record.file_type == 'video' %}
+                        <video controls>
+                            <source src="{{ record.file_path }}">
+                            お使いのブラウザは video タグに対応していません。
+                        </video>
+                        {% elif record.file_type == 'image' %}
+                        <img src="{{ record.file_path }}" alt="{{ record.title }}">
+                        {% endif %}
+                    </div>
+
+                    <!-- 意味と用例 -->
+                    <div class="info-section">
+                        <div class="info-label"><i class="fas fa-book"></i> 意味</div>
+                        <p class="mb-0">{{ record.meaning }}</p>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-label"><i class="fas fa-quote-left"></i> 用例</div>
+                        <p class="mb-0">{{ record.usage_example }}</p>
+                    </div>
+
+                    {% if record.phonetic_notation %}
+                    <div class="info-section">
+                        <div class="info-label"><i class="fas fa-language"></i> 音声記号</div>
+                        <p class="mb-0" style="font-family: monospace;">{{ record.phonetic_notation }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if record.notes %}
+                    <div class="info-section">
+                        <div class="info-label"><i class="fas fa-sticky-note"></i> 備考</div>
+                        <p class="mb-0">{{ record.notes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- オノマトペ型情報 -->
+            {% if record.onomatopoeia_type %}
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="fas fa-tag"></i> オノマトペ型</h6>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-2">{{ record.onomatopoeia_type.type_code }}</h5>
+                    <h6 class="text-muted mb-3">{{ record.onomatopoeia_type.type_name }}</h6>
+                    <p class="small mb-0">{{ record.onomatopoeia_type.description }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 話者情報 -->
+            {% if record.speaker %}
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-user"></i> 話者情報</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <strong>年代:</strong> {{ record.speaker.age_range }}
+                    </p>
+                    <p class="mb-2">
+                        <strong>性別:</strong> {{ record.speaker.get_gender_display }}
+                    </p>
+                    <p class="mb-2">
+                        <strong>言語使用頻度:</strong>
+                        {{ record.speaker.get_language_frequency_display }}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 位置情報 -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="fas fa-map-marker-alt"></i> 位置情報</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <strong>集落:</strong> {{ record.village.name }}
+                    </p>
+                    <p class="mb-0">
+                        <a href="{% url 'village_records' record.village.id %}" class="btn btn-sm btn-outline-success">
+                            この集落の他の記録を見る
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- メタデータ -->
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> メタデータ</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <strong>収録日:</strong> {{ record.recorded_date|date:"Y年m月d日" }}
+                    </p>
+                    <p class="mb-2">
+                        <strong>登録日:</strong> {{ record.created_at|date:"Y年m月d日 H:i" }}
+                    </p>
+                    <p class="mb-0">
+                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}"
+                            class="btn btn-sm btn-primary w-100">
+                            <i class="fas fa-download"></i> ファイルをダウンロード
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

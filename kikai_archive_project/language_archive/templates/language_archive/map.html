@@ -1,0 +1,139 @@
+{% extends 'language_archive/base.html' %}
+
+{% block title %}地図 - 喜界島言語アーカイブ{% endblock %}
+
+{% block extra_css %}
+<style>
+    #map {
+        height: 600px;
+        width: 100%;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .map-info {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .village-list {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .village-item {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .village-item:hover {
+        background: #f8f9fa;
+    }
+
+    .village-item:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3"><i class="fas fa-map"></i> 喜界島 集落マップ</h1>
+            <p class="lead">地図上のマーカーをクリックすると、各集落の言語記録を確認できます。</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-9 mb-4">
+            <div class="map-info">
+                <p class="mb-2">
+                    <i class="fas fa-info-circle text-primary"></i>
+                    国土地理院の地図を使用しています
+                </p>
+                <p class="mb-0">
+                    <i class="fas fa-mouse-pointer text-primary"></i>
+                    マーカーをクリックして詳細を表示
+                </p>
+            </div>
+
+            <!-- Foliumで生成された地図 -->
+            <div id="map-container">
+                {{ map_html|safe }}
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> 集落一覧</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="village-list">
+                        {% for village in villages %}
+                        <div class="village-item"
+                            onclick="focusVillage({{ village.latitude }}, {{ village.longitude }})">
+                            <h6 class="mb-1">{{ village.name }}</h6>
+                            <small class="text-muted">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ village.latitude|floatformat:4 }}, {{ village.longitude|floatformat:4 }}
+                            </small>
+                        </div>
+                        {% empty %}
+                        <div class="p-3 text-center text-muted">
+                            集落データがありません
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 地図オブジェクトを取得（Foliumが生成したもの）
+    let map = null;
+
+    // ページ読み込み時に地図オブジェクトを取得
+    document.addEventListener('DOMContentLoaded', function () {
+        // Foliumが生成した地図を探す
+        const mapElement = document.querySelector('.folium-map');
+        if (mapElement && mapElement.id) {
+            // Foliumは window['map_xxxxx'] という形で地図オブジェクトを格納
+            for (let key in window) {
+                if (key.startsWith('map_') && window[key] && window[key]._container) {
+                    map = window[key];
+                    break;
+                }
+            }
+        }
+    });
+
+    // 集落にフォーカス
+    function focusVillage(lat, lng) {
+        if (map) {
+            map.setView([lat, lng], 15);
+
+            // マーカーのポップアップを開く
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    const markerLatLng = layer.getLatLng();
+                    if (Math.abs(markerLatLng.lat - lat) < 0.001 &&
+                        Math.abs(markerLatLng.lng - lng) < 0.001) {
+                        layer.openPopup();
+                    }
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

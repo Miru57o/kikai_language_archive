@@ -1,0 +1,175 @@
+{% extends 'language_archive/base.html' %}
+
+{% block title %}言語記録一覧 - 喜界島言語アーカイブ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .record-card {
+        transition: all 0.3s;
+        height: 100%;
+    }
+
+    .record-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .file-type-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .badge-audio {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .badge-video {
+        background: #ffebee;
+        color: #d32f2f;
+    }
+
+    .badge-image {
+        background: #e8f5e9;
+        color: #388e3c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3"><i class="fas fa-list"></i> 言語記録一覧</h1>
+            <p class="lead">喜界語のオノマトペを中心とした言語記録のデータベースです。</p>
+        </div>
+    </div>
+
+    <!-- フィルター -->
+    <div class="filter-section">
+        <form method="get" action="{% url 'record_list' %}">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label"><i class="fas fa-map-marker-alt"></i> 集落で絞り込み</label>
+                    <select name="village" class="form-select" onchange="this.form.submit()">
+                        <option value="">すべての集落</option>
+                        {% for village in villages %}
+                        <option value="{{ village.id }}" {% if request.GET.village==village.id|stringformat:"s"
+                            %}selected{% endif %}>
+                            {{ village.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label"><i class="fas fa-file"></i> ファイル種類で絞り込み</label>
+                    <select name="file_type" class="form-select" onchange="this.form.submit()">
+                        <option value="">すべての種類</option>
+                        <option value="audio" {% if request.GET.file_type=="audio" %}selected{% endif %}>音声</option>
+                        <option value="video" {% if request.GET.file_type=="video" %}selected{% endif %}>映像</option>
+                        <option value="image" {% if request.GET.file_type=="image" %}selected{% endif %}>画像</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{% url 'record_list' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-redo"></i> フィルターをクリア
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 統計情報 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>{{ records|length }}</strong> 件の言語記録が見つかりました
+            </div>
+        </div>
+    </div>
+
+    <!-- 言語記録カード -->
+    <div class="row">
+        {% for record in records %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card record-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ record.onomatopoeia_text }}</h5>
+                        <span class="file-type-badge badge-{{ record.file_type }}">
+                            {% if record.file_type == 'audio' %}
+                            <i class="fas fa-volume-up"></i> 音声
+                            {% elif record.file_type == 'video' %}
+                            <i class="fas fa-video"></i> 映像
+                            {% else %}
+                            <i class="fas fa-image"></i> 画像
+                            {% endif %}
+                        </span>
+                    </div>
+                    <h6 class="card-subtitle mb-3 text-muted">{{ record.title }}</h6>
+
+                    <p class="card-text">
+                        <strong>意味:</strong> {{ record.meaning|truncatewords:10 }}
+                    </p>
+
+                    {% if record.onomatopoeia_type %}
+                    <p class="card-text">
+                        <strong>
+                            <span class="tooltip-term" data-tooltip="{{ record.onomatopoeia_type.description }}">
+                                型:
+                            </span>
+                        </strong>
+                        {{ record.onomatopoeia_type.type_code }}
+                    </p>
+                    {% endif %}
+
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ record.village.name }}
+                        </small>
+                    </div>
+
+                    {% if record.speaker %}
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-user"></i>
+                            {{ record.speaker.age_range }} / {{ record.speaker.get_gender_display }}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar"></i> {{ record.recorded_date|date:"Y年m月d日" }}
+                        </small>
+                    </div>
+
+                    <a href="{% url 'record_detail' record.id %}" class="btn btn-primary w-100">
+                        <i class="fas fa-arrow-right"></i> 詳細を見る
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning text-center">
+                <i class="fas fa-exclamation-triangle"></i>
+                言語記録が見つかりませんでした
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
