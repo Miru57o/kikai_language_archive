@@ -64,10 +64,7 @@
                     <select name="village" class="form-select" onchange="this.form.submit()">
                         <option value="">すべての集落</option>
                         {% for village in villages %}
-                        <option value="{{ village.id }}" {% if request.GET.village==village.id|stringformat:"s"
-                            %}selected{% endif %}>
-                            {{ village.name }}
-                        </option>
+                        <option value="{{ village.id }}">{{ village.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -75,9 +72,9 @@
                     <label class="form-label"><i class="fas fa-file"></i> ファイル種類で絞り込み</label>
                     <select name="file_type" class="form-select" onchange="this.form.submit()">
                         <option value="">すべての種類</option>
-                        <option value="audio" {% if request.GET.file_type=="audio" %}selected{% endif %}>音声</option>
-                        <option value="video" {% if request.GET.file_type=="video" %}selected{% endif %}>映像</option>
-                        <option value="image" {% if request.GET.file_type=="image" %}selected{% endif %}>画像</option>
+                        <option value="audio">音声</option>
+                        <option value="video">映像</option>
+                        <option value="image">画像</option>
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -172,4 +169,20 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+    // ページ読み込み時にフィルター値を復元
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const villageId = urlParams.get('village');
+        const fileType = urlParams.get('file_type');
+
+        if (villageId) {
+            document.querySelector('select[name="village"]').value = villageId;
+        }
+        if (fileType) {
+            document.querySelector('select[name="file_type"]').value = fileType;
+        }
+    });
+</script>
 {% endblock %}

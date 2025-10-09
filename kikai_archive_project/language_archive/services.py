@@ -1,24 +1,13 @@
 # language_archive/services.py
 
 import os
-from supabase import create_client
+import requests
 from pathlib import Path
 import uuid
 
-def get_supabase_client():
-    """Supabaseクライアントを取得"""
-    supabase_url = os.environ.get("SUPABASE_URL")
-    supabase_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_ANON_KEY")
-    
-    if not supabase_url or not supabase_key:
-        raise Exception("Supabase環境変数が設定されていません")
-    
-    return create_client(supabase_url, supabase_key)
-
-
 def upload_to_supabase(file, bucket_name, file_prefix=""):
     """
-    Supabaseストレージへのファイルアップロード
+    Supabaseストレージへのファイルアップロード（requests使用）
     
     Args:
         file: アップロードするファイルオブジェクト
@@ -28,7 +17,11 @@ def upload_to_supabase(file, bucket_name, file_prefix=""):
     Returns:
         公開URL
     """
-    supabase = get_supabase_client()
+    supabase_url = os.environ.get("SUPABASE_URL")
+    supabase_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_ANON_KEY")
+    
+    if not supabase_url or not supabase_key:
+        raise Exception("Supabase環境変数が設定されていません")
     
     # ユニークなファイル名を生成
     extension = Path(file.name).suffix
@@ -36,18 +29,25 @@ def upload_to_supabase(file, bucket_name, file_prefix=""):
     
     # ファイルをアップロード
     file_bytes = file.read()
-    file_options = {"upsert": "true"}
+    
+    # Supabase Storage APIエンドポイント
+    upload_url = f"{supabase_url}/storage/v1/object/{bucket_name}/{storage_file_name}"
+    
+    headers = {
+        "Authorization": f"Bearer {supabase_key}",
+        "Content-Type": file.content_type,
+    }
     
     try:
-        supabase.storage.from_(bucket_name).upload(
-            storage_file_name, file_bytes, file_options
-        )
+        response = requests.post(upload_url, data=file_bytes, headers=headers)
+        response.raise_for_status()
         
-        # 公開URLを取得
-        public_url = supabase.storage.from_(bucket_name).get_public_url(storage_file_name)
+        # 公開URLを生成
+        public_url = f"{supabase_url}/storage/v1/object/public/{bucket_name}/{storage_file_name}"
         return public_url
     except Exception as e:
         print(f"アップロードエラー: {e}")
+        print(f"レスポンス: {response.text if 'response' in locals() else 'No response'}")
         raise
 
 

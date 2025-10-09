@@ -1,0 +1,235 @@
+{% extends 'language_archive/base.html' %}
+
+{% block title %}地理環境データアップロード - 喜界島言語アーカイブ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-upload-area {
+        border: 3px dashed var(--secondary-color);
+        border-radius: 12px;
+        padding: 3rem;
+        text-align: center;
+        background: rgba(151, 192, 92, 0.05);
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+        background: rgba(151, 192, 92, 0.1);
+        border-color: var(--primary-color);
+    }
+
+    .file-upload-area.dragover {
+        background: rgba(151, 192, 92, 0.2);
+        border-color: var(--accent-color);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .required-label::after {
+        content: " *";
+        color: #dc3545;
+    }
+
+    #map-preview {
+        height: 300px;
+        width: 100%;
+        border-radius: 10px;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3"><i class="fas fa-upload"></i> 地理環境データのアップロード</h1>
+            <p class="lead">ドローン映像、写真、パノラマ画像を登録します。</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="upload-section">
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label required-label">
+                            <i class="fas fa-file-upload"></i> ファイル
+                        </label>
+                        <div class="file-upload-area" id="fileUploadArea"
+                            onclick="document.getElementById('id_file').click()">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <p class="mb-2"><strong>クリックしてファイルを選択</strong></p>
+                            <p class="small text-muted">または、ここにファイルをドラッグ＆ドロップ</p>
+                            <p class="small text-muted">対応形式: 映像(mp4, mov), 画像(jpg, png)</p>
+                        </div>
+                        <input type="file" name="file" id="id_file" class="d-none" required>
+                        <div id="fileInfo" class="mt-2"></div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.title.id_for_label }}" class="form-label required-label">タイトル</label>
+                            {{ form.title }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.content_type.id_for_label }}"
+                                class="form-label required-label">コンテンツ種類</label>
+                            {{ form.content_type }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label required-label">説明</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.village.id_for_label }}" class="form-label">集落</label>
+                        {{ form.village }}
+                        <small class="form-text text-muted">集落を選択すると、その位置情報が自動で設定されます</small>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.latitude.id_for_label }}" class="form-label">緯度</label>
+                            <input type="number" step="0.000001" name="latitude" id="id_latitude" class="form-control"
+                                placeholder="28.3214">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.longitude.id_for_label }}" class="form-label">経度</label>
+                            <input type="number" step="0.000001" name="longitude" id="id_longitude" class="form-control"
+                                placeholder="129.9259">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="getCurrentLocation">
+                            <i class="fas fa-map-marker-alt"></i> 現在地を取得
+                        </button>
+                        <small class="text-muted ms-2">位置情報サービスを使用して現在地を取得します</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.captured_date.id_for_label }}" class="form-label required-label">撮影日</label>
+                        {{ form.captured_date }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload"></i> アップロード
+                        </button>
+                        <a href="{% url 'geographic_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> キャンセル
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const fileInput = document.getElementById('id_file');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInfo = document.getElementById('fileInfo');
+
+    fileInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            displayFileInfo(file);
+        }
+    });
+
+    fileUploadArea.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    fileUploadArea.addEventListener('dragleave', function (e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+
+    fileUploadArea.addEventListener('drop', function (e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            fileInput.files = e.dataTransfer.files;
+            displayFileInfo(file);
+        }
+    });
+
+    function displayFileInfo(file) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        fileInfo.innerHTML = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <strong>${file.name}</strong> (${sizeMB} MB)
+            </div>
+        `;
+
+        fileUploadArea.style.background = 'rgba(40, 167, 69, 0.1)';
+        fileUploadArea.style.borderColor = '#28a745';
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>アップロード中...';
+    });
+
+    document.getElementById('getCurrentLocation').addEventListener('click', function () {
+        if (navigator.geolocation) {
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>取得中...';
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('id_latitude').value = position.coords.latitude.toFixed(6);
+                    document.getElementById('id_longitude').value = position.coords.longitude.toFixed(6);
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-check"></i> 取得完了';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-map-marker-alt"></i> 現在地を取得';
+                    }, 2000);
+                },
+                (error) => {
+                    alert('位置情報の取得に失敗しました: ' + error.message);
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-map-marker-alt"></i> 現在地を取得';
+                }
+            );
+        } else {
+            alert('このブラウザは位置情報サービスに対応していません');
+        }
+    });
+
+    const villageSelect = document.querySelector('select[name="village"]');
+    if (villageSelect) {
+        villageSelect.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.value) {
+                console.log('集落が選択されました:', selectedOption.text);
+            }
+        });
+    }
+</script>
+{% endblock %}

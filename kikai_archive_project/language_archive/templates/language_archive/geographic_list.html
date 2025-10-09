@@ -11,7 +11,6 @@
         </div>
     </div>
 
-    <!-- フィルター -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
@@ -22,12 +21,9 @@
                                 <label class="form-label">コンテンツ種類</label>
                                 <select name="content_type" class="form-select" onchange="this.form.submit()">
                                     <option value="">すべて</option>
-                                    <option value="drone" {% if request.GET.content_type=="drone" %}selected{% endif %}>
-                                        ドローン映像</option>
-                                    <option value="photo" {% if request.GET.content_type=="photo" %}selected{% endif %}>
-                                        写真</option>
-                                    <option value="panorama" {% if request.GET.content_type=="panorama" %}selected{%
-                                        endif %}>パノラマ</option>
+                                    <option value="drone">ドローン映像</option>
+                                    <option value="photo">写真</option>
+                                    <option value="panorama">パノラマ</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -35,10 +31,7 @@
                                 <select name="village" class="form-select" onchange="this.form.submit()">
                                     <option value="">すべての集落</option>
                                     {% for village in villages %}
-                                    <option value="{{ village.id }}" {% if
-                                        request.GET.village==village.id|stringformat:"s" %}selected{% endif %}>
-                                        {{ village.name }}
-                                    </option>
+                                    <option value="{{ village.id }}">{{ village.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -55,7 +48,6 @@
         </div>
     </div>
 
-    <!-- データ一覧 -->
     <div class="row">
         {% for geo in geo_records %}
         <div class="col-md-6 col-lg-4 mb-4">
@@ -115,4 +107,23 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const contentTypeSelect = document.querySelector('select[name="content_type"]');
+        const villageSelect = document.querySelector('select[name="village"]');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedContentType = urlParams.get('content_type');
+        const selectedVillage = urlParams.get('village');
+
+        if (selectedContentType && contentTypeSelect) {
+            contentTypeSelect.value = selectedContentType;
+        }
+
+        if (selectedVillage && villageSelect) {
+            villageSelect.value = selectedVillage;
+        }
+    });
+</script>
 {% endblock %}
