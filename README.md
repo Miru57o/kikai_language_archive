@@ -20,7 +20,7 @@
   * **バックエンド**: Django
   * **フロントエンド**: HTML, CSS, JavaScript, Bootstrap
   * **地図**: Folium, Leaflet.js
-  * **データベース**: PostgreSQL (Supabase), SQLite
+  * **データベース**: PostgreSQL (Supabase)
   * **ファイルストレージ**: Supabase Storage
   * **その他**: gunicorn, whitenoise など
 
