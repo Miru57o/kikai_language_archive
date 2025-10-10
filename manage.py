@@ -2,7 +2,11 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from pathlib import Path
 
+# プロジェクトディレクトリへのパスをPythonの探索パスに追加
+PROJECT_DIR = Path(__file__).resolve().parent / 'kikai_archive_project'
+sys.path.append(str(PROJECT_DIR))
 
 def main():
     """Run administrative tasks."""
