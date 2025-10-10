@@ -52,8 +52,10 @@
         {% for geo in geo_records %}
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100">
-                {% if geo.thumbnail_path %}
-                <img src="{{ geo.thumbnail_path }}" class="card-img-top" alt="{{ geo.title }}">
+                {% if geo.file_path %}
+                {# サムネイルがあればそれを使い、なければメインのファイルパスを使う #}
+                <img src="{{ geo.thumbnail_path|default:geo.file_path }}" class="card-img-top" alt="{{ geo.title }}"
+                    style="height: 200px; object-fit: cover;">
                 {% else %}
                 <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
                     style="height: 200px;">

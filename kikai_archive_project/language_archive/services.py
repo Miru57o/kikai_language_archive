@@ -72,12 +72,13 @@ def get_bucket_name(file_type):
     return bucket_map.get(file_type, 'image-files')
 
 
-def create_map_with_villages(villages):
+def create_archive_map(language_records, geographic_records):
     """
-    集落情報を含む地図HTMLを生成（Foliumを使用）
+    言語記録と地理環境データを含む地図HTMLを生成
     
     Args:
-        villages: Villageモデルのクエリセット
+        language_records: LanguageRecordモデルのクエリセット
+        geographic_records: GeographicRecordモデルのクエリセット
     
     Returns:
         地図のHTML文字列
@@ -85,10 +86,7 @@ def create_map_with_villages(villages):
     import folium
     from folium.plugins import MarkerCluster
     
-    # 喜界島の中心座標
     center = [28.3214, 129.9259]
-    
-    # 地図オブジェクトを作成
     m = folium.Map(
         location=center,
         zoom_start=12,
@@ -96,32 +94,49 @@ def create_map_with_villages(villages):
         attr='<a href="https://maps.gsi.go.jp/" target="_blank">国土地理院</a>'
     )
     
-    # マーカークラスタリングを追加
     marker_cluster = MarkerCluster().add_to(m)
     
-    # 各集落にマーカーを追加
-    for village in villages:
+    # --- 言語記録をプロット ---
+    for record in language_records:
+        if record.village:
+            popup_html = f"""
+            <div style="min-width: 200px;">
+                <h5><i class="fas fa-microphone" style="color: green;"></i> {record.onomatopoeia_text}</h5>
+                <p><strong>意味:</strong> {record.meaning}</p>
+                <hr style="margin: 5px 0;">
+                <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> {record.village.name}</p>
+                <a href="/records/{record.id}/" class="btn btn-sm btn-primary">詳細を見る</a>
+            </div>
+            """
+            marker = folium.Marker(
+                location=[record.village.latitude, record.village.longitude],
+                popup=folium.Popup(popup_html, max_width=300),
+                icon=folium.Icon(color='green', icon='microphone', prefix='fa')
+            )
+            marker.add_to(marker_cluster)
+
+    # --- 地理環境データをプロット ---
+    for record in geographic_records:
+        content_type_map = {'drone': 'ドローン映像', 'photo': '写真', 'panorama': 'パノラマ'}
+        content_type_display = content_type_map.get(record.content_type, '地理データ')
+
         popup_html = f"""
         <div style="min-width: 200px;">
-            <h4>{village.name}</h4>
-            <p>{village.description if village.description else ''}</p>
-            <a href="/village/{village.id}/records/" class="btn btn-sm btn-primary">
-                言語記録を見る
-            </a>
+            <h5><i class="fas fa-camera" style="color: blue;"></i> {record.title}</h5>
+            <p><strong>種類:</strong> {content_type_display}</p>
+            <p><strong>説明:</strong> {record.description}</p>
+            <hr style="margin: 5px 0;">
+            <a href="{record.file_path}" target="_blank" class="btn btn-sm btn-info">表示する</a>
         </div>
         """
-        
         marker = folium.Marker(
-            location=[village.latitude, village.longitude],
+            location=[record.latitude, record.longitude],
             popup=folium.Popup(popup_html, max_width=300),
-            icon=folium.Icon(color='blue', icon='home', prefix='fa')
+            icon=folium.Icon(color='blue', icon='camera', prefix='fa')
         )
         marker.add_to(marker_cluster)
-    
-    # 地図のHTML文字列を取得
+
     map_html = m._repr_html_()
-    
-    # 地図のdiv要素にIDを追加
     map_html = map_html.replace('<div class="folium-map"', '<div class="folium-map" id="map"')
     
     return map_html

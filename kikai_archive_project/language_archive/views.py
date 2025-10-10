@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.db.models import Count, Q
 from .models import LanguageRecord, GeographicRecord, Village, OnomatopoeiaType, Speaker
 from .forms import LanguageRecordForm, GeographicRecordForm
-from .services import upload_to_supabase, get_bucket_name, create_map_with_villages
+from .services import upload_to_supabase, get_bucket_name, create_archive_map
 from .utils import reverse_geocode, format_record_for_api
 import requests
 import urllib.parse
@@ -34,18 +34,23 @@ def index(request):
 
 
 def map_view(request):
-    """地図ビュー - 集落マップを表示"""
-    villages = Village.objects.all()
+    """地図ビュー - 全ての記録をクラスタ化して表示"""
+    # 言語記録を取得
+    language_records = LanguageRecord.objects.select_related('village').filter(village__isnull=False)
     
-    # Foliumで地図を生成
-    map_html = create_map_with_villages(villages)
+    # 位置情報を持つ地理環境データを取得
+    geographic_records = GeographicRecord.objects.filter(latitude__isnull=False, longitude__isnull=False)
+    
+    # 両方のデータを渡して地図を生成
+    map_html = create_archive_map(
+        language_records=language_records, 
+        geographic_records=geographic_records
+    )
     
     context = {
         'map_html': map_html,
-        'villages': villages,
     }
     return render(request, 'language_archive/map.html', context)
-
 
 def upload_language_record(request):
     """言語記録のアップロード"""
