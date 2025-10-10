@@ -40,6 +40,14 @@
         content: " *";
         color: #dc3545;
     }
+
+    #map-preview {
+        height: 350px;
+        width: 100%;
+        border-radius: 10px;
+        margin-top: 1.5rem;
+        border: 1px solid #ddd;
+    }
 </style>
 {% endblock %}
 
@@ -122,6 +130,15 @@
                             {{ form.speaker }}
                         </div>
                     </div>
+                    <!-- 位置情報 -->
+                    <div class="mb-3">
+                        <p class="form-label" style="font-weight: 600; color: var(--text-dark);">位置情報</p>
+                        <small class="form-text text-muted">集落を選択するか、地図上をクリックして位置を指定してください。</small>
+                        <div id="map-preview"></div>
+                    </div>
+
+                    {{ form.latitude }}
+                    {{ form.longitude }}
 
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -213,6 +230,52 @@
         const btn = this.querySelector('button[type="submit"]');
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>アップロード中...';
+    });
+
+    // 位置情報の取得と設定
+    document.addEventListener('DOMContentLoaded', function () {
+        const latField = document.getElementById('id_latitude');
+        const lonField = document.getElementById('id_longitude');
+        const villageSelect = document.getElementById('id_village');
+
+        // 集落データをJavaScriptオブジェクトとして取得
+        const villagesData = JSON.parse(document.getElementById('villages-data').textContent);
+
+        // 地図の初期化
+        const map = L.map('map-preview').setView([28.3214, 129.9259], 12); // 喜界島の中心に設定
+
+        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+            attribution: '<a href="https://maps.gsi.go.jp/" target="_blank">国土地理院</a>'
+        }).addTo(map);
+
+        let marker;
+
+        function updateMarker(lat, lng) {
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+            map.panTo([lat, lng]);
+            latField.value = lat;
+            lonField.value = lng;
+        }
+
+        // 地図クリックイベント
+        map.on('click', function (e) {
+            updateMarker(e.latlng.lat, e.latlng.lng);
+        });
+
+        // 集落セレクトボックスの変更イベント
+        villageSelect.addEventListener('change', function () {
+            const selectedVillageId = this.value;
+            if (selectedVillageId) {
+                const village = villagesData.find(v => v.id == selectedVillageId);
+                if (village) {
+                    updateMarker(village.latitude, village.longitude);
+                }
+            }
+        });
     });
 </script>
 {% endblock %}

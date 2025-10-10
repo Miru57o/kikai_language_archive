@@ -12,7 +12,7 @@ class LanguageRecordForm(forms.ModelForm):
         fields = [
             'title', 'onomatopoeia_text', 'meaning', 'usage_example',
             'phonetic_notation', 'file_type', 'speaker', 'village',
-            'onomatopoeia_type', 'recorded_date', 'notes'
+            'onomatopoeia_type', 'recorded_date', 'notes', 'latitude', 'longitude'
         ]
         widgets = {
             'title': forms.TextInput(attrs={
@@ -51,6 +51,8 @@ class LanguageRecordForm(forms.ModelForm):
                 'rows': 3,
                 'placeholder': '備考（オプション）'
             }),
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput(),
         }
 
 

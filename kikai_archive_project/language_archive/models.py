@@ -87,6 +87,10 @@ class LanguageRecord(models.Model):
     speaker = models.ForeignKey(Speaker, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="話者")
     village = models.ForeignKey(Village, on_delete=models.SET_NULL, null=True, verbose_name="集落")
     onomatopoeia_type = models.ForeignKey(OnomatopoeiaType, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="型")
+
+    #座標
+    latitude = models.FloatField(null=True, blank=True, verbose_name="緯度")
+    longitude = models.FloatField(null=True, blank=True, verbose_name="経度")
     
     # メタデータ
     recorded_date = models.DateField(verbose_name="収録日")

@@ -62,15 +62,28 @@ def upload_language_record(request):
             
             if file:
                 try:
+                    record = form.save(commit=False)
+                    
+                    # 位置情報処理を追加
+                    lat = form.cleaned_data.get('latitude')
+                    lon = form.cleaned_data.get('longitude')
+                    village = form.cleaned_data.get('village')
+
+                    if lat and lon:
+                        record.latitude = lat
+                        record.longitude = lon
+                    elif village:
+                        record.latitude = village.latitude
+                        record.longitude = village.longitude
+
                     # Supabaseにアップロード
                     file_type = form.cleaned_data['file_type']
                     bucket_name = get_bucket_name(file_type)
                     public_url = upload_to_supabase(file, bucket_name, f"language/{file_type}/")
                     
-                    # データベースに保存
-                    record = form.save(commit=False)
                     record.file_path = public_url
                     record.save()
+                    form.save_m2m() # ManyToManyフィールドがあれば保存
                     
                     messages.success(request, '言語記録をアップロードしました。')
                     return redirect('record_list')
@@ -81,7 +94,9 @@ def upload_language_record(request):
     else:
         form = LanguageRecordForm()
     
-    context = {'form': form}
+    # テンプレートに集落情報を渡す
+    villages = Village.objects.all().values('id', 'name', 'latitude', 'longitude')
+    context = {'form' : form, 'villages_data': list(villages)}
     return render(request, 'language_archive/upload_language.html', context)
 
 
@@ -95,13 +110,25 @@ def upload_geographic_record(request):
             
             if file:
                 try:
+                    record = form.save(commit=False)
+                    
+                    # 位置情報処理を追加
+                    lat = form.cleaned_data.get('latitude')
+                    lon = form.cleaned_data.get('longitude')
+                    village = form.cleaned_data.get('village')
+
+                    if lat and lon:
+                        record.latitude = lat
+                        record.longitude = lon
+                    elif village:
+                        record.latitude = village.latitude
+                        record.longitude = village.longitude
+
                     # Supabaseにアップロード
                     content_type = form.cleaned_data['content_type']
                     bucket_name = get_bucket_name(content_type)
                     public_url = upload_to_supabase(file, bucket_name, f"geographic/{content_type}/")
                     
-                    # データベースに保存
-                    record = form.save(commit=False)
                     record.file_path = public_url
                     record.save()
                     
@@ -113,8 +140,10 @@ def upload_geographic_record(request):
                 messages.error(request, 'ファイルを選択してください。')
     else:
         form = GeographicRecordForm()
-    
-    context = {'form': form}
+        
+    # テンプレートに集落情報を渡す
+    villages = Village.objects.all().values('id', 'name', 'latitude', 'longitude')
+    context = {'form': form, 'villages_data': list(villages)}
     return render(request, 'language_archive/upload_geographic.html', context)
 
 
