@@ -4,6 +4,7 @@ import os
 import requests
 from pathlib import Path
 import uuid
+from django.urls import reverse
 
 def upload_to_supabase(file, bucket_name, file_prefix=""):
     """
@@ -96,16 +97,36 @@ def create_archive_map(language_records, geographic_records):
     
     marker_cluster = MarkerCluster().add_to(m)
     
-    # --- 言語記録をプロット ---
+def create_archive_map(language_records, geographic_records):
+    """
+    言語記録と地理環境データを含む地図HTMLを生成
+    """
+    import folium
+    from folium.plugins import MarkerCluster
+    
+    center = [28.3214, 129.9259]
+    m = folium.Map(
+        location=center,
+        zoom_start=12,
+        tiles='https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
+        attr='<a href="https://maps.gsi.go.jp/" target="_blank">国土地理院</a>'
+    )
+    
+    marker_cluster = MarkerCluster().add_to(m)
+    
+    # --- 1. 言語記録をプロット ---
     for record in language_records:
         if record.village:
+            detail_url = reverse('record_detail', args=[record.id])
+            
             popup_html = f"""
             <div style="min-width: 200px;">
                 <h5><i class="fas fa-microphone" style="color: green;"></i> {record.onomatopoeia_text}</h5>
                 <p><strong>意味:</strong> {record.meaning}</p>
                 <hr style="margin: 5px 0;">
                 <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> {record.village.name}</p>
-                <a href="/records/{record.id}/" class="btn btn-sm btn-primary">詳細を見る</a>
+                
+                <a href="{detail_url}" class="btn btn-sm btn-primary" target="_top">詳細を見る</a>
             </div>
             """
             marker = folium.Marker(
@@ -114,6 +135,7 @@ def create_archive_map(language_records, geographic_records):
                 icon=folium.Icon(color='green', icon='microphone', prefix='fa')
             )
             marker.add_to(marker_cluster)
+
 
     # --- 地理環境データをプロット ---
     for record in geographic_records:

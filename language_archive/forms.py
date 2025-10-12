@@ -51,8 +51,6 @@ class LanguageRecordForm(forms.ModelForm):
                 'rows': 3,
                 'placeholder': '備考（オプション）'
             }),
-            'latitude': forms.HiddenInput(),
-            'longitude': forms.HiddenInput(),
         }
 
 

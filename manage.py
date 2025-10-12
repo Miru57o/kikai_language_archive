@@ -4,10 +4,6 @@ import os
 import sys
 from pathlib import Path
 
-# プロジェクトディレクトリへのパスをPythonの探索パスに追加
-PROJECT_DIR = Path(__file__).resolve().parent / 'kikai_archive_project'
-sys.path.append(str(PROJECT_DIR))
-
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'kikai_archive_project.settings')
