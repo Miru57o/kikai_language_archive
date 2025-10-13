@@ -126,7 +126,7 @@ def create_archive_map(language_records, geographic_records):
                 <hr style="margin: 5px 0;">
                 <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> {record.village.name}</p>
                 
-                <a href="{detail_url}" class="btn btn-sm btn-primary" target="_top">詳細を見る</a>
+                <a href="{detail_url}" class="btn btn-sm btn-light" target="_top">詳細を見る</a>
             </div>
             """
             marker = folium.Marker(
