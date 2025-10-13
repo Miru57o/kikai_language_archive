@@ -135,8 +135,6 @@ def create_archive_map(language_records, geographic_records):
                 icon=folium.Icon(color='green', icon='microphone', prefix='fa')
             )
             marker.add_to(marker_cluster)
-
-
     # --- 地理環境データをプロット ---
     for record in geographic_records:
         content_type_map = {'drone': 'ドローン映像', 'photo': '写真', 'panorama': 'パノラマ'}
