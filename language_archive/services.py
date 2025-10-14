@@ -114,7 +114,7 @@ def create_archive_map(language_records, geographic_records):
     
     marker_cluster = MarkerCluster().add_to(m)
     
-    # --- 1. 言語記録をプロット ---
+    # --- 言語記録をプロット ---
     for record in language_records:
         if record.village:
             detail_url = reverse('record_detail', args=[record.id])
@@ -135,6 +135,7 @@ def create_archive_map(language_records, geographic_records):
                 icon=folium.Icon(color='green', icon='microphone', prefix='fa')
             )
             marker.add_to(marker_cluster)
+            
     # --- 地理環境データをプロット ---
     for record in geographic_records:
         content_type_map = {'drone': 'ドローン映像', 'photo': '写真', 'panorama': 'パノラマ'}
