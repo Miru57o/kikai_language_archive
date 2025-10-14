@@ -11,7 +11,7 @@ class LanguageRecordForm(forms.ModelForm):
         model = LanguageRecord
         fields = [
             'title', 'onomatopoeia_text', 'meaning', 'usage_example',
-            'phonetic_notation', 'file_type', 'speaker', 'village',
+            'phonetic_notation', 'language_frequency','file_type', 'speaker', 'village',
             'onomatopoeia_type', 'recorded_date', 'notes', 'latitude', 'longitude'
         ]
         widgets = {
@@ -38,6 +38,7 @@ class LanguageRecordForm(forms.ModelForm):
                 'rows': 2,
                 'placeholder': '音声記号を入力（オプション）'
             }),
+            'language_frequency': forms.Select(attrs={'class': 'form-control'}),
             'file_type': forms.Select(attrs={'class': 'form-control'}),
             'speaker': forms.Select(attrs={'class': 'form-control'}),
             'village': forms.Select(attrs={'class': 'form-control'}),
@@ -51,6 +52,8 @@ class LanguageRecordForm(forms.ModelForm):
                 'rows': 3,
                 'placeholder': '備考（オプション）'
             }),
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput(),
         }
 
 
@@ -92,7 +95,7 @@ class SpeakerForm(forms.ModelForm):
         model = Speaker
         fields = [
             'speaker_id', 'age_range', 'gender', 'village',
-            'language_frequency', 'consent_video', 'notes'
+            'consent_video', 'notes'
         ]
         widgets = {
             'speaker_id': forms.TextInput(attrs={
@@ -105,7 +108,6 @@ class SpeakerForm(forms.ModelForm):
             }),
             'gender': forms.Select(attrs={'class': 'form-control'}),
             'village': forms.Select(attrs={'class': 'form-control'}),
-            'language_frequency': forms.Select(attrs={'class': 'form-control'}),
             'consent_video': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'notes': forms.Textarea(attrs={
                 'class': 'form-control',

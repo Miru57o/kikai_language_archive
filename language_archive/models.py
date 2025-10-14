@@ -25,19 +25,11 @@ class Speaker(models.Model):
         ('F', '女性'),
         ('O', 'その他'),
     ]
-    
-    FREQUENCY_CHOICES = [
-        ('daily', '日常的に使用'),
-        ('often', 'よく使用'),
-        ('sometimes', 'たまに使用'),
-        ('rarely', 'ほとんど使用しない'),
-    ]
-    
+
     speaker_id = models.CharField(max_length=50, unique=True, verbose_name="話者ID")
     age_range = models.CharField(max_length=20, verbose_name="年代")
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="性別")
     village = models.ForeignKey(Village, on_delete=models.SET_NULL, null=True, verbose_name="集落")
-    language_frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, verbose_name="言語使用頻度")
     consent_video = models.BooleanField(default=False, verbose_name="映像公開同意")
     notes = models.TextField(blank=True, verbose_name="備考")
     
@@ -71,12 +63,19 @@ class LanguageRecord(models.Model):
         ('image', '画像'),
     ]
     
+    FREQUENCY_CHOICES = [
+        ('daily', '日常的に使用'),
+        ('often', 'よく使用'),
+        ('sometimes', 'たまに使用'),
+        ('rarely', 'ほとんど使用しない'),
+    ]
     # 基本情報
     title = models.CharField(max_length=200, verbose_name="タイトル")
     onomatopoeia_text = models.CharField(max_length=100, verbose_name="オノマトペ")
     meaning = models.TextField(verbose_name="意味")
     usage_example = models.TextField(verbose_name="用例")
     phonetic_notation = models.TextField(blank=True, verbose_name="音声記号")
+    language_frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, verbose_name="言語使用頻度")
     
     # ファイル情報
     file_type = models.CharField(max_length=10, choices=FILE_TYPE_CHOICES, verbose_name="ファイル種類")

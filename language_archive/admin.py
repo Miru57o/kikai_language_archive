@@ -12,8 +12,8 @@ class VillageAdmin(admin.ModelAdmin):
 
 @admin.register(Speaker)
 class SpeakerAdmin(admin.ModelAdmin):
-    list_display = ['speaker_id', 'age_range', 'gender', 'village', 'language_frequency', 'consent_video']
-    list_filter = ['gender', 'language_frequency', 'consent_video', 'village']
+    list_display = ['speaker_id', 'age_range', 'gender', 'village', 'consent_video']
+    list_filter = ['gender', 'consent_video', 'village']
     search_fields = ['speaker_id', 'age_range']
     list_per_page = 20
 
@@ -27,8 +27,8 @@ class OnomatopoeiaTypeAdmin(admin.ModelAdmin):
 
 @admin.register(LanguageRecord)
 class LanguageRecordAdmin(admin.ModelAdmin):
-    list_display = ['title', 'onomatopoeia_text', 'file_type', 'village', 'speaker', 'recorded_date']
-    list_filter = ['file_type', 'village', 'recorded_date', 'onomatopoeia_type']
+    list_display = ['title', 'onomatopoeia_text', 'file_type', 'village', 'speaker', 'language_frequency','recorded_date']
+    list_filter = ['file_type', 'village', 'recorded_date', 'onomatopoeia_type','language_frequency']
     search_fields = ['title', 'onomatopoeia_text', 'meaning']
     date_hierarchy = 'recorded_date'
     list_per_page = 20

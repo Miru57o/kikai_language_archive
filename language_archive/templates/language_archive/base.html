@@ -7,17 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}喜界島言語アーカイブ{% endblock %}</title>
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -104,8 +100,6 @@
         }
 
         .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px var(--shadow-color);
             border-color: var(--primary-color);
         }
 
@@ -336,7 +330,9 @@
             line-height: 1.7;
         }
 
-        .display-4 {
+        .display-4,
+        .display-5,
+        .display-6 {
             font-family: 'Noto Serif JP', serif;
             font-weight: 700;
             color: var(--text-primary);
@@ -420,7 +416,6 @@
 </head>
 
 <body>
-    <!-- ナビゲーションバー -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="{% url 'index' %}">
@@ -433,32 +428,32 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'index' %}">
-                            <i class="fas fa-home"></i> ホーム
+                            ホーム
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'map_view' %}">
-                            <i class="fas fa-map"></i> 地図
+                            地図
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'record_list' %}">
-                            <i class="fas fa-list"></i> 言語記録
+                            言語記録
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'geographic_list' %}">
-                            <i class="fas fa-image"></i> 地理データ
+                            地理データ
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'upload_language_record' %}">
-                            <i class="fas fa-upload"></i> アップロード
+                            アップロード
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'upload_geographic_record' %}">
-                            <i class="fas fa-camera"></i> 地理データアップロード
+                            地理データアップロード
                         </a>
                     </li>
                 </ul>
@@ -466,7 +461,6 @@
         </div>
     </nav>
 
-    <!-- メッセージ表示 -->
     {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
@@ -478,12 +472,10 @@
     </div>
     {% endif %}
 
-    <!-- メインコンテンツ -->
     <div class="content-wrapper">
         {% block content %}{% endblock %}
     </div>
 
-    <!-- フッター -->
     <footer class="footer">
         <div class="container text-center">
             <p class="mb-1" style="font-weight: 600;">喜界島言語アーカイブプロジェクト</p>
@@ -492,13 +484,10 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
 
-    <!-- ツールチップ機能 -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tooltipElements = document.querySelectorAll('[data-tooltip]');

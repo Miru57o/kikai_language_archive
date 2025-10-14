@@ -1,0 +1,61 @@
+{% extends 'language_archive/base.html' %}
+
+{% block title %}{{ speaker.speaker_id }} の言語記録 - 喜界島言語アーカイブ{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">ホーム</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'map_view' %}">地図</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ speaker.speaker_id }}</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="mb-3"><i class="fas fa-user text-primary"></i> 話者情報: {{ speaker.speaker_id }}</h1>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>年代:</strong> {{ speaker.age_range }}</p>
+                            <p class="mb-0"><strong>性別:</strong> {{ speaker.get_gender_display }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if speaker.village %}
+                            <p class="mb-2"><strong>集落:</strong> {{ speaker.village.name }}</p>
+                            {% endif %}
+                            <p class="mb-0"><strong>言語記録数:</strong> {{ records|length }}件</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if records %}
+    <div class="row">
+        <div class="col-12 mb-3">
+            <h3><i class="fas fa-list"></i> この話者の言語記録</h3>
+        </div>
+        {% for record in records %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ record.onomatopoeia_text }}</h5>
+                    <h6 class="card-subtitle mb-3 text-muted">{{ record.title }}</h6>
+                    <p><strong>意味:</strong> {{ record.meaning|truncatewords:10 }}</p>
+                    <div class="mt-auto">
+                        <a href="{% url 'record_detail' record.id %}" class="btn btn-primary w-100">詳細を見る</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">この話者の言語記録はまだ登録されていません。</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -81,25 +81,30 @@
 
                     <!-- 意味と用例 -->
                     <div class="info-section">
-                        <div class="info-label"><i class="fas fa-book"></i> 意味</div>
+                        <div class="info-label">意味</div>
                         <p class="mb-0">{{ record.meaning }}</p>
                     </div>
 
                     <div class="info-section">
-                        <div class="info-label"><i class="fas fa-quote-left"></i> 用例</div>
+                        <div class="info-label">用例</div>
                         <p class="mb-0">{{ record.usage_example }}</p>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-label">この記録での言語使用頻度</div>
+                        <p class="mb-0">{{ record.get_language_frequency_display }}</p>
                     </div>
 
                     {% if record.phonetic_notation %}
                     <div class="info-section">
-                        <div class="info-label"><i class="fas fa-language"></i> 音声記号</div>
+                        <div class="info-label">音声記号</div>
                         <p class="mb-0" style="font-family: monospace;">{{ record.phonetic_notation }}</p>
                     </div>
                     {% endif %}
 
                     {% if record.notes %}
                     <div class="info-section">
-                        <div class="info-label"><i class="fas fa-sticky-note"></i> 備考</div>
+                        <div class="info-label">備考</div>
                         <p class="mb-0">{{ record.notes }}</p>
                     </div>
                     {% endif %}
@@ -134,10 +139,6 @@
                     </p>
                     <p class="mb-2">
                         <strong>性別:</strong> {{ record.speaker.get_gender_display }}
-                    </p>
-                    <p class="mb-2">
-                        <strong>言語使用頻度:</strong>
-                        {{ record.speaker.get_language_frequency_display }}
                     </p>
                 </div>
             </div>
