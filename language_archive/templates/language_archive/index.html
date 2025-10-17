@@ -7,8 +7,8 @@
 
     <div class="row my-5">
         <div class="col-12 text-center">
-            <h1 class="display-5 fw-bold mb-3">喜界島オノマトペ・<br class="d-md-none">言語アーカイブ</h1>
-            <p class="lead">消滅危機言語である喜界語を未来に残すためのデジタルアーカイブシステム</p>
+            <h1 class="display-5 mb-3">喜界島オノマトペ・<br class="d-md-none">言語アーカイブ</h1>
+            <p class="lead">喜界語を未来に残すためのデジタルアーカイブシステム</p>
         </div>
     </div>
 
@@ -22,8 +22,17 @@
                         特にオノマトペ（擬音語・擬態語）を中心に、話者の音声・映像とともに、地理情報や話者属性を紐づけて記録しています。
                     </p>
                     <p class="card-text">
-                        <strong>研究体制：</strong> 関西学院大学 総合政策学部
+                        <strong>研究体制：</strong>
+                        <a href="https://www.kwansei.ac.jp/" target="_blank" class="text-decoration-none">
+                            関西学院大学 総合政策学部
+                        </a>
                     </p>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal"
+                            data-bs-target="#researchModal">
+                            <i class="fas fa-info-circle me-1"></i>研究詳細
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -42,7 +51,7 @@
         <div class="col-md-4 mb-3">
             <div class="card text-center">
                 <div class="card-body">
-                    <i class="fas fa-map-marker-alt fa-3x text-success mb-3"></i>
+                    <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
                     <h2 class="display-4">{{ total_villages }}</h2>
                     <p class="text-muted">登録集落数</p>
                 </div>
@@ -51,7 +60,7 @@
         <div class="col-md-4 mb-3">
             <div class="card text-center">
                 <div class="card-body">
-                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
                     <h2 class="display-4">{{ total_speakers }}</h2>
                     <p class="text-muted">話者数</p>
                 </div>
@@ -67,7 +76,7 @@
             <a href="{% url 'map_view' %}" class="text-decoration-none">
                 <div class="card h-100">
                     <div class="card-body text-center">
-                        <i class="fas fa-map fa-3x text-primary mb-3"></i>
+                        <i class="fas fa-map fa-3x text-success mb-3"></i>
                         <h5 class="card-title">地図から探す</h5>
                         <p class="card-text small">話者情報や地理データを地図上で確認</p>
                     </div>
@@ -89,7 +98,7 @@
             <a href="{% url 'geographic_list' %}" class="text-decoration-none">
                 <div class="card h-100">
                     <div class="card-body text-center">
-                        <i class="fas fa-camera fa-3x text-info mb-3"></i>
+                        <i class="fas fa-camera fa-3x text-success mb-3"></i>
                         <h5 class="card-title">地理データ</h5>
                         <p class="card-text small">ドローン映像や写真を閲覧</p>
                     </div>
@@ -100,12 +109,63 @@
             <a href="{% url 'upload_language_record' %}" class="text-decoration-none">
                 <div class="card h-100">
                     <div class="card-body text-center">
-                        <i class="fas fa-upload fa-3x text-warning mb-3"></i>
+                        <i class="fas fa-upload fa-3x text-success mb-3"></i>
                         <h5 class="card-title">データアップロード</h5>
                         <p class="card-text small">新しい記録を登録</p>
                     </div>
                 </div>
             </a>
+        </div>
+    </div>
+</div>
+
+<!-- Research Details Modal -->
+<div class="modal fade" id="researchModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    研究プロジェクト詳細
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>研究目的</h6>
+                        <p>喜界語の消滅危機言語としての記録・保存と、特にオノマトペの体系的な収集・分析</p>
+
+                        <h6>研究チーム</h6>
+                        <p>関西学院大学 総合政策学部 言語学・文化研究グループ</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>調査地域</h6>
+                        <p>鹿児島県喜界島</p>
+
+                        <h6>研究期間</h6>
+                        <p>20XX年〜継続中</p>
+                    </div>
+                </div>
+                <hr>
+                <h6>技術スタック</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <span class="badge bg-primary me-1 mb-1">Django</span>
+                        <span class="badge bg-info me-1 mb-1">PostgreSQL</span>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="badge bg-success me-1 mb-1">Supabase</span>
+                        <span class="badge bg-warning me-1 mb-1">Leaflet</span>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="badge bg-secondary me-1 mb-1">Bootstrap</span>
+                        <span class="badge bg-dark me-1 mb-1">Font Awesome</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            </div>
         </div>
     </div>
 </div>

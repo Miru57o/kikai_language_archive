@@ -47,9 +47,19 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'index' %}">ホーム</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'record_list' %}">言語記録一覧</a></li>
-                    <li class="breadcrumb-item active">{{ record.onomatopoeia_text }}</li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'index' %}">
+                            <i class="fas fa-home me-1"></i>ホーム
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'record_list' %}">
+                            <i class="fas fa-list me-1"></i>言語記録一覧
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        <i class="fas fa-microphone me-1"></i>{{ record.onomatopoeia_text }}
+                    </li>
                 </ol>
             </nav>
         </div>
@@ -59,8 +69,7 @@
         <div class="col-lg-8">
             <div class="detail-card card mb-4">
                 <div class="card-body">
-                    <h1 class="mb-2">{{ record.onomatopoeia_text }}</h1>
-                    <h5 class="text-muted mb-4">{{ record.title }}</h5>
+                    <h1 class="mb-4">{{ record.onomatopoeia_text }}</h1>
 
                     <div class="media-container text-center">
                         {% if record.file_type == 'audio' %}
@@ -83,7 +92,8 @@
                         </a>
                         {% elif record.file_type == 'image' %}
                         <a href="{{ record.file_path }}" target="_blank" rel="noopener noreferrer" title="新しいタブで画像を開く">
-                            <img src="{{ record.file_path }}" alt="{{ record.title }}" style="cursor: pointer;">
+                            <img src="{{ record.file_path }}" alt="{{ record.onomatopoeia_text }}"
+                                style="cursor: pointer;">
                         </a>
                         {% endif %}
                     </div>
@@ -136,33 +146,43 @@
 
             {% if record.speaker %}
             <div class="card mb-3">
-                <div class="card-header bg-info text-white">
+                <div class="card-header bg-primary text-white">
                     <h6 class="mb-0"><i class="fas fa-user"></i> 話者情報</h6>
                 </div>
                 <div class="card-body">
                     <p class="mb-2">
-                        <strong>年代:</strong> {{ record.speaker.age_range }}
+                        <strong><i class="fas fa-birthday-cake me-1"></i>年代:</strong> {{ record.speaker.age_range }}
                     </p>
                     <p class="mb-2">
                         <strong>性別:</strong> {{ record.speaker.get_gender_display }}
+                    </p>
+                    <p class="mb-0">
+                        <a href="{% url 'speaker_records' record.speaker.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-user me-1"></i>この話者の他の記録を見る
+                        </a>
                     </p>
                 </div>
             </div>
             {% endif %}
 
             <div class="card mb-3">
-                <div class="card-header bg-success text-white">
+                <div class="card-header bg-primary text-white">
                     <h6 class="mb-0"><i class="fas fa-map-marker-alt"></i> 位置情報</h6>
                 </div>
                 <div class="card-body">
+                    {% if record.speaker and record.speaker.village %}
                     <p class="mb-2">
-                        <strong>集落:</strong> {{ record.village.name }}
+                        <strong>集落:</strong> {{ record.speaker.village.name }}
                     </p>
                     <p class="mb-0">
-                        <a href="{% url 'village_records' record.village.id %}" class="btn btn-sm btn-outline-success">
-                            この集落の他の記録を見る
+                        <a href="{% url 'village_records' record.speaker.village.id %}"
+                            class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-map-marker-alt me-1"></i>この集落の他の記録を見る
                         </a>
                     </p>
+                    {% else %}
+                    <p class="mb-0 text-muted">集落情報がありません</p>
+                    {% endif %}
                 </div>
             </div>
 
@@ -179,8 +199,8 @@
                     </p>
                     <p class="mb-0">
                         <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}"
-                            class="btn btn-sm btn-primary w-100">
-                            <i class="fas fa-download"></i> ファイルをダウンロード
+                            class="btn btn-info btn-sm">
+                            <i class="fas fa-download me-1"></i>ファイルをダウンロード
                         </a>
                     </p>
                 </div>

@@ -18,12 +18,12 @@ def index(request):
     """トップページ"""
     # 統計情報を取得
     total_records = LanguageRecord.objects.count()
-    total_villages = LanguageRecord.objects.values('village').distinct().count()
+    total_villages = LanguageRecord.objects.filter(speaker__village__isnull=False).values('speaker__village').distinct().count()
     total_speakers = Speaker.objects.count()
     
     # 最近の言語記録
     recent_records = LanguageRecord.objects.select_related(
-        'village', 'speaker', 'onomatopoeia_type'
+        'speaker', 'onomatopoeia_type'
     ).order_by('-created_at')[:6]
     
     context = {
@@ -78,18 +78,6 @@ def upload_language_record(request):
                 try:
                     record = form.save(commit=False)
                     
-                    # 位置情報処理を追加
-                    lat = form.cleaned_data.get('latitude')
-                    lon = form.cleaned_data.get('longitude')
-                    village = form.cleaned_data.get('village')
-
-                    if lat and lon:
-                        record.latitude = lat
-                        record.longitude = lon
-                    elif village:
-                        record.latitude = village.latitude
-                        record.longitude = village.longitude
-
                     # Supabaseにアップロード
                     file_type = form.cleaned_data['file_type']
                     bucket_name = get_bucket_name(file_type)
@@ -164,7 +152,7 @@ def upload_geographic_record(request):
 def record_list(request):
     """言語記録一覧"""
     records = LanguageRecord.objects.select_related(
-        'speaker', 'village', 'onomatopoeia_type'
+        'speaker', 'onomatopoeia_type'
     ).all()
     
     # フィルタリング
@@ -172,7 +160,7 @@ def record_list(request):
     file_type = request.GET.get('file_type')
     
     if village_id:
-        records = records.filter(village_id=village_id)
+        records = records.filter(speaker__village_id=village_id)
     if file_type:
         records = records.filter(file_type=file_type)
     
@@ -188,7 +176,7 @@ def record_list(request):
 def record_detail(request, record_id):
     """言語記録の詳細"""
     record = get_object_or_404(
-        LanguageRecord.objects.select_related('speaker', 'village', 'onomatopoeia_type'),
+        LanguageRecord.objects.select_related('speaker', 'onomatopoeia_type'),
         id=record_id
     )
     
@@ -221,7 +209,7 @@ def geographic_list(request):
 def village_records(request, village_id):
     """特定集落の言語記録一覧"""
     village = get_object_or_404(Village, id=village_id)
-    records = LanguageRecord.objects.filter(village=village).select_related(
+    records = LanguageRecord.objects.filter(speaker__village=village).select_related(
         'speaker', 'onomatopoeia_type'
     )
     
@@ -235,7 +223,7 @@ def speaker_records(request, speaker_id):
     """特定話者の言語記録一覧"""
     speaker = get_object_or_404(Speaker, id=speaker_id)
     records = LanguageRecord.objects.filter(speaker=speaker).select_related(
-        'village', 'onomatopoeia_type'
+        'onomatopoeia_type'
     )
     
     context = {
@@ -247,8 +235,8 @@ def speaker_records(request, speaker_id):
 
 def get_village_records_api(request, village_id):
     """集落の言語記録を取得するAPI"""
-    records = LanguageRecord.objects.filter(village_id=village_id).select_related(
-        'speaker', 'village', 'onomatopoeia_type'
+    records = LanguageRecord.objects.filter(speaker__village_id=village_id).select_related(
+        'speaker', 'onomatopoeia_type'
     )
     
     data = [format_record_for_api(record) for record in records]

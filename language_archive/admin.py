@@ -27,27 +27,31 @@ class OnomatopoeiaTypeAdmin(admin.ModelAdmin):
 
 @admin.register(LanguageRecord)
 class LanguageRecordAdmin(admin.ModelAdmin):
-    list_display = ['title', 'onomatopoeia_text', 'file_type', 'village', 'speaker', 'language_frequency','recorded_date']
-    list_filter = ['file_type', 'village', 'recorded_date', 'onomatopoeia_type','language_frequency']
-    search_fields = ['title', 'onomatopoeia_text', 'meaning']
+    list_display = ['onomatopoeia_text', 'file_type', 'speaker_village', 'speaker', 'language_frequency','recorded_date']
+    list_filter = ['file_type', 'speaker__village', 'recorded_date', 'onomatopoeia_type','language_frequency']
+    search_fields = ['onomatopoeia_text', 'meaning']
     date_hierarchy = 'recorded_date'
     list_per_page = 20
     readonly_fields = ['created_at', 'updated_at']
     
     fieldsets = (
         ('基本情報', {
-            'fields': ('title', 'onomatopoeia_text', 'meaning', 'usage_example', 'phonetic_notation')
+            'fields': ('onomatopoeia_text', 'meaning', 'usage_example', 'phonetic_notation', 'language_frequency')
         }),
         ('ファイル情報', {
             'fields': ('file_type', 'file_path', 'thumbnail_path')
         }),
         ('関連情報', {
-            'fields': ('speaker', 'village', 'onomatopoeia_type')
+            'fields': ('speaker', 'onomatopoeia_type')
         }),
         ('メタデータ', {
             'fields': ('recorded_date', 'notes', 'created_at', 'updated_at')
         }),
     )
+
+    def speaker_village(self, obj):
+        return obj.speaker.village.name if obj.speaker and obj.speaker.village else '-'
+    speaker_village.short_description = '集落'
 
 
 @admin.register(GeographicRecord)

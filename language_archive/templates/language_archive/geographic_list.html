@@ -18,21 +18,21 @@
                     <form method="get" action="{% url 'geographic_list' %}">
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label class="form-label">コンテンツ種類</label>
-                                <select name="content_type" class="form-select" onchange="this.form.submit()">
-                                    <option value="">すべて</option>
-                                    <option value="drone_video">ドローン映像</option>
-                                    <option value="drone_photo">ドローン画像</option>
-                                    <option value="other">その他</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">集落</label>
+                                <label class="form-label">集落で絞り込み</label>
                                 <select name="village" class="form-select" onchange="this.form.submit()">
                                     <option value="">すべての集落</option>
                                     {% for village in villages %}
                                     <option value="{{ village.id }}">{{ village.name }}</option>
                                     {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">ファイル種類で絞り込み</label>
+                                <select name="content_type" class="form-select" onchange="this.form.submit()">
+                                    <option value="">すべて</option>
+                                    <option value="drone_video">ドローン映像</option>
+                                    <option value="drone_photo">ドローン画像</option>
+                                    <option value="other">その他</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">

@@ -10,15 +10,11 @@ class LanguageRecordForm(forms.ModelForm):
     class Meta:
         model = LanguageRecord
         fields = [
-            'title', 'onomatopoeia_text', 'meaning', 'usage_example',
-            'phonetic_notation', 'language_frequency','file_type', 'speaker', 'village',
-            'onomatopoeia_type', 'recorded_date', 'notes', 'latitude', 'longitude'
+            'onomatopoeia_text', 'meaning', 'usage_example',
+            'phonetic_notation', 'language_frequency','file_type', 'speaker',
+            'onomatopoeia_type', 'recorded_date', 'notes'
         ]
         widgets = {
-            'title': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'タイトルを入力'
-            }),
             'onomatopoeia_text': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'オノマトペを入力'
@@ -41,7 +37,6 @@ class LanguageRecordForm(forms.ModelForm):
             'language_frequency': forms.Select(attrs={'class': 'form-control'}),
             'file_type': forms.Select(attrs={'class': 'form-control'}),
             'speaker': forms.Select(attrs={'class': 'form-control'}),
-            'village': forms.Select(attrs={'class': 'form-control'}),
             'onomatopoeia_type': forms.Select(attrs={'class': 'form-control'}),
             'recorded_date': forms.DateInput(attrs={
                 'class': 'form-control',
@@ -52,8 +47,6 @@ class LanguageRecordForm(forms.ModelForm):
                 'rows': 3,
                 'placeholder': '備考（オプション）'
             }),
-            'latitude': forms.HiddenInput(),
-            'longitude': forms.HiddenInput(),
         }
 
 

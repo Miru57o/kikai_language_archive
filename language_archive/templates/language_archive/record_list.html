@@ -54,7 +54,7 @@
         <form method="get" action="{% url 'record_list' %}">
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label class="form-label"><i class="fas fa-map-marker-alt"></i> 集落で絞り込み</label>
+                    <label class="form-label">集落で絞り込み</label>
                     <select name="village" class="form-select" onchange="this.form.submit()">
                         <option value="">すべての集落</option>
                         {% for village in villages %}
@@ -63,7 +63,7 @@
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="form-label"><i class="fas fa-file"></i> ファイル種類で絞り込み</label>
+                    <label class="form-label">ファイル種類で絞り込み</label>
                     <select name="file_type" class="form-select" onchange="this.form.submit()">
                         <option value="">すべての種類</option>
                         <option value="audio">音声</option>
@@ -109,7 +109,6 @@
                             {% endif %}
                         </span>
                     </div>
-                    <h6 class="card-subtitle mb-3 text-muted">{{ record.title }}</h6>
 
                     <p class="card-text">
                         <strong>意味:</strong> {{ record.meaning|truncatewords:10 }}
@@ -126,11 +125,13 @@
                     </p>
                     {% endif %}
 
+                    {% if record.speaker and record.speaker.village %}
                     <div class="mb-2">
                         <small class="text-muted">
-                            <i class="fas fa-map-marker-alt"></i> {{ record.village.name }}
+                            <i class="fas fa-map-marker-alt"></i> {{ record.speaker.village.name }}
                         </small>
                     </div>
+                    {% endif %}
 
                     {% if record.speaker %}
                     <div class="mb-2">
