@@ -42,8 +42,8 @@
                             <select name="year" id="yearFilter" class="form-select" onchange="this.form.submit()">
                                 <option value="">すべての年</option>
                                 {% for year in all_years %}
-                                <option value="{{ year }}" {% if year|is_equal:selected_year %}selected{% endif %}>{{
-                                    year }}年</option>
+                                <option value="{{ year }}" {% if year|is_equal:selected_year %}selected{% endif %}>
+                                    {{year }}年</option>
                                 {% endfor %}
                             </select>
                         </div>
