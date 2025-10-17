@@ -1,4 +1,5 @@
 {% extends 'language_archive/base.html' %}
+{% load custom_filters %}
 
 {% block title %}地図 - 喜界島言語アーカイブ{% endblock %}
 
@@ -6,7 +7,6 @@
 <style>
     #map {
         height: 75vh;
-        /* 地図の高さを広げる */
         width: 100%;
         border-radius: 15px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -32,18 +32,34 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12 mb-4">
+        <div class="col-lg-12">
             <div class="map-info">
-                <p class="mb-2">
-                    <i class="fas fa-info-circle text-primary"></i>
-                    国土地理院の地図を使用しています
-                </p>
-                <p class="mb-0">
-                    <i class="fas fa-mouse-pointer text-primary"></i>
-                    マーカーをクリックして詳細を表示
-                </p>
+                <form method="get" action="{% url 'map_view' %}">
+                    <div class="row align-items-end">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <label for="yearFilter" class="form-label">
+                                収録年で絞り込み</label>
+                            <select name="year" id="yearFilter" class="form-select" onchange="this.form.submit()">
+                                <option value="">すべての年</option>
+                                {% for year in all_years %}
+                                <option value="{{ year }}" {% if year|is_equal:selected_year %}selected{% endif %}>{{
+                                    year }}年</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'map_view' %}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-redo"></i> フィルターをクリア
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-lg-12 mb-4">
             <div id="map-container">
                 {{ map_html|safe }}
             </div>
@@ -54,6 +70,13 @@
 
 {% block extra_js %}
 <script>
-
+    // ページ読み込み時にフィルターの選択値を復元
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const year = urlParams.get('year');
+        if (year) {
+            document.getElementById('yearFilter').value = year;
+        }
+    });
 </script>
 {% endblock %}

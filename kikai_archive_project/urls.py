@@ -45,6 +45,9 @@ urlpatterns = [
     # 集落関連
     path('village/<int:village_id>/records/', views.village_records, name='village_records'),
     
+    # 話者関連
+    path('speaker/<int:speaker_id>/records/', views.speaker_records, name='speaker_records'),
+    
     # API
     path('api/village/<int:village_id>/records/', views.get_village_records_api, name='api_village_records'),
     

@@ -21,9 +21,9 @@
                                 <label class="form-label">コンテンツ種類</label>
                                 <select name="content_type" class="form-select" onchange="this.form.submit()">
                                     <option value="">すべて</option>
-                                    <option value="drone">ドローン映像</option>
-                                    <option value="photo">写真</option>
-                                    <option value="panorama">パノラマ</option>
+                                    <option value="drone_video">ドローン映像</option>
+                                    <option value="drone_photo">ドローン画像</option>
+                                    <option value="other">その他</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -68,11 +68,11 @@
                         <h5 class="card-title mb-0">{{ geo.title }}</h5>
                         <span class="badge bg-primary">
                             {% if geo.content_type == 'drone' %}
-                            <i class="fas fa-helicopter"></i> ドローン
+                            <i class="fas fa-helicopter"></i> ドローン映像
                             {% elif geo.content_type == 'photo' %}
-                            <i class="fas fa-camera"></i> 写真
+                            <i class="fas fa-helicopter"></i> ドローン画像
                             {% else %}
-                            <i class="fas fa-panorama"></i> パノラマ
+                            <i class="fas fa-panorama"></i> その他
                             {% endif %}
                         </span>
                     </div>

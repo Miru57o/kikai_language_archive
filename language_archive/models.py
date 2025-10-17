@@ -109,9 +109,9 @@ class LanguageRecord(models.Model):
 class GeographicRecord(models.Model):
     """地理・環境データテーブル"""
     CONTENT_TYPE_CHOICES = [
-        ('drone', 'ドローン映像'),
-        ('photo', '写真'),
-        ('panorama', 'パノラマ'),
+        ('drone_video', 'ドローン映像'),
+        ('drone_photo', 'ドローン画像'),
+        ('other', 'その他'),
     ]
     
     title = models.CharField(max_length=200, verbose_name="タイトル")

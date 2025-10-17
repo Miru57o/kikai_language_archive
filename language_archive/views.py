@@ -3,6 +3,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
 from django.contrib import messages
+from django.db.models.functions import TruncYear
 from django.db.models import Count, Q
 from .models import LanguageRecord, GeographicRecord, Village, OnomatopoeiaType, Speaker
 from .forms import LanguageRecordForm, GeographicRecordForm
@@ -11,6 +12,7 @@ from .utils import reverse_geocode, format_record_for_api
 import requests
 import urllib.parse
 import os
+import datetime
 
 def index(request):
     """トップページ"""
@@ -34,21 +36,33 @@ def index(request):
 
 
 def map_view(request):
-    """地図ビュー - 全ての記録をクラスタ化して表示"""
-    # 言語記録を取得
-    language_records = LanguageRecord.objects.select_related('village').filter(village__isnull=False)
-    
-    # 位置情報を持つ地理環境データを取得
+    """地図ビュー"""
     geographic_records = GeographicRecord.objects.filter(latitude__isnull=False, longitude__isnull=False)
+    speakers = Speaker.objects.select_related('village').filter(village__isnull=False)
+
+    # データベースから存在する年をすべて取得
+    lang_years = LanguageRecord.objects.annotate(year=TruncYear('recorded_date')).values_list('year', flat=True).distinct()
+    geo_years = GeographicRecord.objects.annotate(year=TruncYear('captured_date')).values_list('year', flat=True).distinct()
     
-    # 両方のデータを渡して地図を生成
+    # setを使って重複をなくし、降順にソート
+    all_years = sorted(list(set([y.year for y in lang_years if y] + [y.year for y in geo_years if y])), reverse=True)
+
+    # フィルター処理
+    selected_year = request.GET.get('year')
+    if selected_year:
+        geographic_records = geographic_records.filter(captured_date__year=selected_year)
+        speakers_with_records_in_year = LanguageRecord.objects.filter(recorded_date__year=selected_year).values_list('speaker_id', flat=True)
+        speakers = speakers.filter(id__in=speakers_with_records_in_year)
+
     map_html = create_archive_map(
-        language_records=language_records, 
-        geographic_records=geographic_records
+        geographic_records=geographic_records,
+        speakers=speakers
     )
-    
+
     context = {
         'map_html': map_html,
+        'all_years': all_years,
+        'selected_year': int(selected_year) if selected_year else None,
     }
     return render(request, 'language_archive/map.html', context)
 
@@ -216,6 +230,19 @@ def village_records(request, village_id):
         'records': records,
     }
     return render(request, 'language_archive/village_records.html', context)
+
+def speaker_records(request, speaker_id):
+    """特定話者の言語記録一覧"""
+    speaker = get_object_or_404(Speaker, id=speaker_id)
+    records = LanguageRecord.objects.filter(speaker=speaker).select_related(
+        'village', 'onomatopoeia_type'
+    )
+    
+    context = {
+        'speaker': speaker,
+        'records': records,
+    }
+    return render(request, 'language_archive/speaker_records.html', context)
 
 
 def get_village_records_api(request, village_id):

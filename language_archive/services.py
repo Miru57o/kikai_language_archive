@@ -57,7 +57,7 @@ def get_bucket_name(file_type):
     ファイルタイプに応じたバケット名を返す
     
     Args:
-        file_type: ファイルタイプ（audio, video, image, drone, photo, panorama）
+        file_type: ファイルタイプ（audio, video, image, drone_video, drone_photo, other）
     
     Returns:
         バケット名
@@ -66,20 +66,20 @@ def get_bucket_name(file_type):
         'audio': 'audio-files',
         'video': 'video-files',
         'image': 'image-files',
-        'drone': 'drone-footage',
-        'photo': 'image-files',
-        'panorama': 'image-files',
-    }
+        'drone_video': 'drone-video-files',
+        'drone_photo': 'drone-photo-files',
+        'other': 'other-geo-files',
+        }
     return bucket_map.get(file_type, 'image-files')
 
 
-def create_archive_map(language_records, geographic_records):
+def create_archive_map(geographic_records, speakers):
     """
-    言語記録と地理環境データを含む地図HTMLを生成
+    話者データ、地理環境データを含む地図HTMLを生成
     
     Args:
-        language_records: LanguageRecordモデルのクエリセット
         geographic_records: GeographicRecordモデルのクエリセット
+        speakers: Speakerモデルのクエリセット
     
     Returns:
         地図のHTML文字列
@@ -97,48 +97,9 @@ def create_archive_map(language_records, geographic_records):
     
     marker_cluster = MarkerCluster().add_to(m)
     
-def create_archive_map(language_records, geographic_records):
-    """
-    言語記録と地理環境データを含む地図HTMLを生成
-    """
-    import folium
-    from folium.plugins import MarkerCluster
-    
-    center = [28.3214, 129.9259]
-    m = folium.Map(
-        location=center,
-        zoom_start=12,
-        tiles='https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
-        attr='<a href="https://maps.gsi.go.jp/" target="_blank">国土地理院</a>'
-    )
-    
-    marker_cluster = MarkerCluster().add_to(m)
-    
-    # --- 言語記録をプロット ---
-    for record in language_records:
-        if record.village:
-            detail_url = reverse('record_detail', args=[record.id])
-            
-            popup_html = f"""
-            <div style="min-width: 200px;">
-                <h5><i class="fas fa-microphone" style="color: green;"></i> {record.onomatopoeia_text}</h5>
-                <p><strong>意味:</strong> {record.meaning}</p>
-                <hr style="margin: 5px 0;">
-                <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> {record.village.name}</p>
-                
-                <a href="{detail_url}" class="btn btn-sm btn-light" target="_top">詳細を見る</a>
-            </div>
-            """
-            marker = folium.Marker(
-                location=[record.village.latitude, record.village.longitude],
-                popup=folium.Popup(popup_html, max_width=300),
-                icon=folium.Icon(color='green', icon='microphone', prefix='fa')
-            )
-            marker.add_to(marker_cluster)
-            
     # --- 地理環境データをプロット ---
     for record in geographic_records:
-        content_type_map = {'drone': 'ドローン映像', 'photo': '写真', 'panorama': 'パノラマ'}
+        content_type_map = {'drone_video': 'ドローン映像', 'drone_photo': 'ドローン画像', 'other':'その他地理データ'}
         content_type_display = content_type_map.get(record.content_type, '地理データ')
 
         popup_html = f"""
@@ -156,6 +117,29 @@ def create_archive_map(language_records, geographic_records):
             icon=folium.Icon(color='blue', icon='camera', prefix='fa')
         )
         marker.add_to(marker_cluster)
+
+    # --- 話者をプロット ---
+    for speaker in speakers:
+        if speaker.village:
+            detail_url = reverse('speaker_records', args=[speaker.id])
+            
+            popup_html = f"""
+            <div style="min-width: 200px;">
+                <h5><i class="fas fa-user" style="color: red;"></i> {speaker.speaker_id}</h5>
+                <p><strong>年代:</strong> {speaker.age_range}</p>
+                <p><strong>性別:</strong> {speaker.get_gender_display()}</p>
+                <hr style="margin: 5px 0;">
+                <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> {speaker.village.name}</p>
+                
+                <a href="{detail_url}" class="btn btn-sm btn-light" target="_top">この話者の記録を見る</a>
+            </div>
+            """
+            marker = folium.Marker(
+                location=[speaker.village.latitude, speaker.village.longitude],
+                popup=folium.Popup(popup_html, max_width=300),
+                icon=folium.Icon(color='red', icon='user', prefix='fa')
+            )
+            marker.add_to(marker_cluster)
 
     map_html = m._repr_html_()
     map_html = map_html.replace('<div class="folium-map"', '<div class="folium-map" id="map"')

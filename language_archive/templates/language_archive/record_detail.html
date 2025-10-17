@@ -6,14 +6,14 @@
 <style>
     .detail-card {
         border: none;
-        border-radius: 15px;
+        border-radius: 5px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .media-container {
         background: #f8f9fa;
         padding: 2rem;
-        border-radius: 15px;
+        border-radius: 5px;
         margin-bottom: 2rem;
     }
 
@@ -21,14 +21,14 @@
     .media-container video,
     .media-container img {
         width: 100%;
-        border-radius: 10px;
+        border-radius: 5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .info-section {
         background: white;
         padding: 1.5rem;
-        border-radius: 10px;
+        border-radius: 5px;
         margin-bottom: 1rem;
         border-left: 4px solid var(--primary-color);
     }
@@ -62,24 +62,32 @@
                     <h1 class="mb-2">{{ record.onomatopoeia_text }}</h1>
                     <h5 class="text-muted mb-4">{{ record.title }}</h5>
 
-                    <!-- メディアファイル -->
-                    <div class="media-container">
+                    <div class="media-container text-center">
                         {% if record.file_type == 'audio' %}
-                        <audio controls>
+                        <audio controls class="mb-2">
                             <source src="{{ record.file_path }}">
                             お使いのブラウザは audio タグに対応していません。
                         </audio>
+                        <a href="{{ record.file_path }}" target="_blank" rel="noopener noreferrer"
+                            class="d-block small">
+                            <i class="fas fa-external-link-alt"></i> 新しいタブで音声を開く
+                        </a>
                         {% elif record.file_type == 'video' %}
-                        <video controls>
+                        <video controls class="mb-2">
                             <source src="{{ record.file_path }}">
                             お使いのブラウザは video タグに対応していません。
                         </video>
+                        <a href="{{ record.file_path }}" target="_blank" rel="noopener noreferrer"
+                            class="d-block small">
+                            <i class="fas fa-external-link-alt"></i> 新しいタブで映像を開く
+                        </a>
                         {% elif record.file_type == 'image' %}
-                        <img src="{{ record.file_path }}" alt="{{ record.title }}">
+                        <a href="{{ record.file_path }}" target="_blank" rel="noopener noreferrer" title="新しいタブで画像を開く">
+                            <img src="{{ record.file_path }}" alt="{{ record.title }}" style="cursor: pointer;">
+                        </a>
                         {% endif %}
                     </div>
 
-                    <!-- 意味と用例 -->
                     <div class="info-section">
                         <div class="info-label">意味</div>
                         <p class="mb-0">{{ record.meaning }}</p>
@@ -113,7 +121,6 @@
         </div>
 
         <div class="col-lg-4">
-            <!-- オノマトペ型情報 -->
             {% if record.onomatopoeia_type %}
             <div class="card mb-3">
                 <div class="card-header bg-primary text-white">
@@ -127,7 +134,6 @@
             </div>
             {% endif %}
 
-            <!-- 話者情報 -->
             {% if record.speaker %}
             <div class="card mb-3">
                 <div class="card-header bg-info text-white">
@@ -144,7 +150,6 @@
             </div>
             {% endif %}
 
-            <!-- 位置情報 -->
             <div class="card mb-3">
                 <div class="card-header bg-success text-white">
                     <h6 class="mb-0"><i class="fas fa-map-marker-alt"></i> 位置情報</h6>
@@ -161,7 +166,6 @@
                 </div>
             </div>
 
-            <!-- メタデータ -->
             <div class="card">
                 <div class="card-header bg-secondary text-white">
                     <h6 class="mb-0"><i class="fas fa-info-circle"></i> メタデータ</h6>
