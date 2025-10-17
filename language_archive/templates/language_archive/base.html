@@ -16,35 +16,24 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary-color: #1d5c96;
-            /* メイン */
-            --primary-light: #7db0de;
-            /* アクセント */
-            --primary-dark: #12395d;
-            /* 強調 */
-
-            /* セマンティックカラー */
-            --text-primary: #12395d;
-            --text-secondary: #1d5c96;
-            --text-light: #7db0de;
-            --bg-light: #f7fbfd;
-            --bg-white: #ffffff;
-            --border-color: #7db0de;
-            --shadow-color: rgba(29, 92, 150, 0.15);
-            --card-border-radius: 5px;
+            --primary-color: #1C9B8E;
+            --secondary-color: #30D9C8;
+            --accent-light: #AFF0F2;
+            --accent-dark: #043B38;
+            --text-color: #333333;
+            --bg-color: #ffffff;
+            --border-color: #dee2e6;
+            --card-border-radius: 8px;
         }
 
         body {
-            font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: var(--text-primary);
-            background-color: var(--bg-light);
-            line-height: 1.7;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
         h1,
@@ -53,175 +42,72 @@
         h4,
         h5,
         h6 {
-            font-family: 'Noto Serif JP', serif;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-weight: 400;
+            color: var(--accent-dark);
         }
 
         .navbar {
-            background: var(--primary-color);
-            box-shadow: 0 2px 12px var(--shadow-color);
-            padding: 0.75rem 0;
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .navbar-brand {
-            font-family: 'Noto Serif JP', serif;
-            font-weight: 700;
-            font-size: 1.4rem;
-            color: white !important;
-            letter-spacing: 0.5px;
+            font-weight: 500;
+            color: var(--primary-color) !important;
         }
 
         .nav-link {
-            color: rgba(255, 255, 255, 0.92) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.95rem;
+            color: var(--text-color) !important;
+            font-weight: 400;
         }
 
         .nav-link:hover {
-            color: white !important;
-            background-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-1px);
+            color: var(--primary-color) !important;
         }
 
         .content-wrapper {
-            min-height: calc(100vh - 140px);
             padding: 2.5rem 0;
+            background-color: var(--bg-color);
         }
 
         .card {
             border: 1px solid var(--border-color);
             border-radius: var(--card-border-radius);
-            box-shadow: 0 2px 8px rgba(29, 92, 150, 0.08);
-            transition: all 0.3s ease;
-            background: var(--bg-white);
-        }
-
-        .card:hover {
-            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .card-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background-color: var(--primary-color);
             color: white !important;
-            border: none;
             border-radius: var(--card-border-radius) var(--card-border-radius) 0 0 !important;
-            padding: 1rem 1.5rem;
-            font-weight: 600;
         }
 
-        .card-header h6,
-        .card-header .mb-0,
         .card-header * {
             color: white !important;
         }
 
-        .text-white,
-        .text-white * {
-            color: white !important;
-        }
-
         .btn-primary {
-            background: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            padding: 0.65rem 1.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(29, 92, 150, 0.25);
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
             color: white;
+            border-radius: 8px;
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(29, 92, 150, 0.35);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: var(--primary-light);
-            border: none;
-            color: white;
-            border-radius: 8px;
-            padding: 0.65rem 1.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
+            background-color: #16796f;
+            border-color: #16796f;
             color: white;
         }
 
         .btn-outline-primary {
-            border: 2px solid var(--primary-color);
+            border-color: var(--primary-color);
             color: var(--primary-color);
-            border-radius: 8px;
-            padding: 0.6rem 1.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
         }
 
         .btn-outline-primary:hover {
-            background: var(--primary-color);
+            background-color: var(--primary-color);
             color: white;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline-secondary {
-            border: 2px solid var(--primary-light);
-            color: var(--primary-color);
-            border-radius: 8px;
-            padding: 0.6rem 1.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-secondary:hover {
-            background: var(--primary-light);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .btn-info {
-            background: var(--primary-light);
-            border: none;
-            color: white;
-            font-weight: 600;
-        }
-
-        .btn-info:hover {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .badge {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .bg-primary {
-            background: var(--primary-color) !important;
-        }
-
-        .bg-success {
-            background: var(--primary-light) !important;
-        }
-
-        .bg-info {
-            background: var(--primary-light) !important;
-            color: white !important;
-        }
-
-        .bg-secondary {
-            background: var(--primary-dark) !important;
         }
 
         .text-primary {
@@ -229,187 +115,42 @@
         }
 
         .text-muted {
-            color: var(--text-secondary) !important;
+            color: #6c757d !important;
         }
 
-        .text-success {
-            color: var(--primary-color) !important;
+        .bg-primary {
+            background-color: var(--primary-color) !important;
         }
 
-        .text-info {
-            color: var(--primary-light) !important;
+        .bg-info {
+            background-color: var(--secondary-color) !important;
         }
 
-        .alert {
-            border-radius: 10px;
-            border: none;
-            padding: 1rem 1.5rem;
-            font-weight: 500;
+        .bg-success {
+            background-color: var(--accent-light) !important;
+            color: var(--accent-dark) !important;
         }
 
-        .alert-info {
-            background-color: rgba(125, 176, 222, 0.15);
-            color: var(--text-primary);
-            border-left: 4px solid var(--primary-light);
-        }
-
-        .alert-success {
-            background-color: rgba(29, 92, 150, 0.1);
-            color: var(--primary-dark);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .alert-warning {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: #856404;
-            border-left: 4px solid #ffc107;
-        }
-
-        .alert-danger {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: #721c24;
-            border-left: 4px solid #dc3545;
+        .bg-secondary {
+            background-color: var(--accent-dark) !important;
         }
 
         .footer {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--text-primary) 100%);
-            color: rgba(255, 255, 255, 0.95);
+            background-color: var(--accent-dark);
+            color: rgba(255, 255, 255, 0.8);
             padding: 2.5rem 0;
             margin-top: 4rem;
-            font-size: 0.95rem;
-        }
-
-        .footer p {
-            margin-bottom: 0.5rem;
-        }
-
-        .breadcrumb {
-            background-color: transparent;
-            padding: 0.75rem 0;
-            margin-bottom: 1.5rem;
         }
 
         .breadcrumb-item a {
             color: var(--primary-color);
             text-decoration: none;
-            font-weight: 500;
         }
 
-        .breadcrumb-item a:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
-        }
-
-        .breadcrumb-item.active {
-            color: var(--text-secondary);
-        }
-
-        .form-control,
-        .form-select {
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.65rem 1rem;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(29, 92, 150, 0.15);
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .lead {
-            font-size: 1.15rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        .display-4,
-        .display-5,
-        .display-6 {
-            font-family: 'Noto Serif JP', serif;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        /* ツールチップスタイル */
-        .tooltip-term {
-            cursor: help;
-            border-bottom: 2px dotted var(--primary-color);
-            position: relative;
-            color: var(--primary-color);
-            font-weight: 500;
-        }
-
-        .tooltip-popup {
-            position: absolute;
-            background: var(--primary-dark);
-            color: white;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            max-width: 320px;
-            z-index: 1000;
-            pointer-events: none;
-            display: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            line-height: 1.5;
-        }
-
-        /* アクセントカラー適用 */
-        .border-primary {
-            border-color: var(--primary-color) !important;
-        }
-
-        /* カード内のアイコン色 */
-        .card-body i.fa-3x {
-            color: var(--primary-color);
-        }
-
-        /* ナビゲーションアイコン */
-        .nav-link i {
-            margin-right: 0.4rem;
-        }
-
-        /* スクロールバー*/
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-light);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-light);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-
-        /* バッジカラー */
-        .badge-audio {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .badge-video {
-            background: var(--primary-dark);
-            color: white;
-        }
-
-        .badge-image {
-            background: var(--primary-light);
-            color: white;
+        @media (max-width: 767.98px) {
+            .lead {
+                font-size: 1rem; 
+            }
         }
     </style>
 
@@ -417,7 +158,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="{% url 'index' %}">
                 喜界島言語アーカイブ
@@ -428,34 +169,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'index' %}">
-                            ホーム
-                        </a>
+                        <a class="nav-link" href="{% url 'index' %}">ホーム</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'map_view' %}">
-                            地図
-                        </a>
+                        <a class="nav-link" href="{% url 'map_view' %}">地図</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'record_list' %}">
-                            言語記録
-                        </a>
+                        <a class="nav-link" href="{% url 'record_list' %}">言語記録</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'geographic_list' %}">
-                            地理データ
-                        </a>
+                        <a class="nav-link" href="{% url 'geographic_list' %}">地理データ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'upload_language_record' %}">
-                            アップロード
-                        </a>
+                        <a class="nav-link" href="{% url 'upload_language_record' %}">アップロード</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'upload_geographic_record' %}">
-                            地理データアップロード
-                        </a>
+                        <a class="nav-link" href="{% url 'upload_geographic_record' %}">地理データアップロード</a>
                     </li>
                 </ul>
             </div>
@@ -479,7 +208,7 @@
 
     <footer class="footer">
         <div class="container text-center">
-            <p class="mb-1" style="font-weight: 600;">喜界島言語アーカイブプロジェクト</p>
+            <p class="mb-1" style="font-weight: 500;">喜界島言語アーカイブプロジェクト</p>
             <p class="small mt-2" style="opacity: 0.9;">関西学院大学 総合政策学部</p>
             <p class="small mt-2" style="opacity: 0.85;">© 2025 Kikai Language Archive Project</p>
         </div>
@@ -501,7 +230,7 @@
                     tooltip.textContent = tooltipText;
                     tooltip.style.cssText = `
                         position: absolute;
-                        background: #12395d;
+                        background: var(--accent-dark); /* ツールチップの背景色を更新 */
                         color: white;
                         padding: 10px 14px;
                         border-radius: 8px;
