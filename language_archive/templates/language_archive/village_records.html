@@ -10,16 +10,16 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <a href="{% url 'index' %}">
-                            <i class="fas fa-home me-1"></i>ホーム
+                            ホーム
                         </a>
                     </li>
                     <li class="breadcrumb-item">
                         <a href="{% url 'map_view' %}">
-                            <i class="fas fa-map me-1"></i>地図
+                            地図
                         </a>
                     </li>
                     <li class="breadcrumb-item active">
-                        <i class="fas fa-map-marker-alt me-1"></i>{{ village.name }}
+                        {{ village.name }}
                     </li>
                 </ol>
             </nav>
@@ -47,11 +47,11 @@
                         </div>
                         <div class="col-md-6">
                             <div class="d-flex align-items-center h-100">
-                                <p class="mb-0 me-4"> <strong><i class="fas fa-microphone"></i> 言語記録数:</strong>
+                                <p class="mb-0 me-4"> <strong>言語記録数:</strong>
                                     {{records|length }}件
                                 </p>
                                 <a href="{% url 'map_view' %}" class="btn btn-outline-primary">
-                                    <i class="fas fa-map"></i> 地図に戻る
+                                    地図に戻る
                                 </a>
                             </div>
                         </div>
