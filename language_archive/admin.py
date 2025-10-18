@@ -1,9 +1,9 @@
 # language_archive/admin.py
 
 from django.contrib import admin
-from .models import Village, Speaker, OnomatopoeiaType, LanguageRecord, GeographicRecord, ExternalLink
+from .models import Village, Speaker, OnomatopoeiaType, LanguageRecord, GeographicRecord
 
-@admin.register(Village)
+admin.register(Village)
 class VillageAdmin(admin.ModelAdmin):
     list_display = ['name', 'latitude', 'longitude']
     search_fields = ['name']
@@ -60,14 +60,6 @@ class GeographicRecordAdmin(admin.ModelAdmin):
     list_filter = ['content_type', 'village', 'captured_date']
     search_fields = ['title', 'description']
     date_hierarchy = 'captured_date'
-    list_per_page = 20
-    readonly_fields = ['created_at']
-
-
-@admin.register(ExternalLink)
-class ExternalLinkAdmin(admin.ModelAdmin):
-    list_display = ['title', 'creator', 'url', 'created_at']
-    search_fields = ['title', 'creator', 'description']
     list_per_page = 20
     readonly_fields = ['created_at']
 

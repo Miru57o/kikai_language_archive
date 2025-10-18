@@ -70,7 +70,6 @@
 
 {% block extra_js %}
 <script>
-    // ページ読み込み時にフィルターの選択値を復元
     document.addEventListener('DOMContentLoaded', function () {
         const urlParams = new URLSearchParams(window.location.search);
         const year = urlParams.get('year');
@@ -87,17 +86,16 @@
                     window.location.href = button.href;
                 });
             });
-
-            // 地理データボタンの処理
+            // 言語記録詳細ボタンの処理
             const geographicButtons = document.querySelectorAll('.geographic-detail-btn');
             geographicButtons.forEach(function (button) {
                 setupMobileButtonHandling(button, function () {
                     window.open(button.href, '_blank');
                 });
             });
-        }, 1000); // 地図の読み込み完了を待つ
+        }, 1000); 
 
-        // モバイル対応のボタン処理関数
+        // タッチイベントとクリックイベントの両方を処理する関数
         function setupMobileButtonHandling(button, action) {
             let touchHandled = false;
 

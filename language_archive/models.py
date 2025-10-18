@@ -93,7 +93,7 @@ class LanguageRecord(models.Model):
     thumbnail_path = models.URLField(max_length=1024, blank=True, verbose_name="サムネイルURL")
     
     # 関連情報
-    speaker = models.ForeignKey(Speaker, on_delete=models.PROTECT, null=False, blank=False, verbose_name="話者")
+    speaker = models.ForeignKey(Speaker, on_delete=models.PROTECT, null=True, blank=True, verbose_name="話者")
     onomatopoeia_type = models.ForeignKey(OnomatopoeiaType, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="型")
     
     # メタデータ
@@ -139,22 +139,4 @@ class GeographicRecord(models.Model):
     
     def __str__(self):
         return self.title
-
-
-class ExternalLink(models.Model):
-    """外部コンテンツリンクテーブル"""
-    title = models.CharField(max_length=200, verbose_name="タイトル")
-    url = models.URLField(verbose_name="URL")
-    description = models.TextField(verbose_name="説明")
-    thumbnail_url = models.URLField(blank=True, verbose_name="サムネイルURL")
-    creator = models.CharField(max_length=100, verbose_name="制作者")
-    created_at = models.DateTimeField(default=timezone.now, verbose_name="登録日時")
-    
-    class Meta:
-        verbose_name = "外部リンク"
-        verbose_name_plural = "外部リンク"
-    
-    def __str__(self):
-        return self.title
-
 # Create your models here.
