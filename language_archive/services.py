@@ -131,7 +131,7 @@ def create_archive_map(geographic_records, speakers):
                 <hr style="margin: 5px 0;">
                 <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> {speaker.village.name}</p>
                 
-                <a href="{detail_url}" class="btn btn-sm btn-light" target="_top">この話者の記録を見る</a>
+                <a href="{detail_url}" class="btn btn-sm btn-light" target="_top" ontouchend="event.stopPropagation();onClick="event.stopPropagation();">この話者の記録を見る</a>
             </div>
             """
             marker = folium.Marker(
