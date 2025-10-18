@@ -77,6 +77,51 @@
         if (year) {
             document.getElementById('yearFilter').value = year;
         }
+
+        // モバイル対応: ポップアップ内のボタンのタッチイベント処理
+        setTimeout(function () {
+            // 話者詳細ボタンの処理
+            const speakerButtons = document.querySelectorAll('.speaker-detail-btn');
+            speakerButtons.forEach(function (button) {
+                setupMobileButtonHandling(button, function () {
+                    window.location.href = button.href;
+                });
+            });
+
+            // 地理データボタンの処理
+            const geographicButtons = document.querySelectorAll('.geographic-detail-btn');
+            geographicButtons.forEach(function (button) {
+                setupMobileButtonHandling(button, function () {
+                    window.open(button.href, '_blank');
+                });
+            });
+        }, 1000); // 地図の読み込み完了を待つ
+
+        // モバイル対応のボタン処理関数
+        function setupMobileButtonHandling(button, action) {
+            let touchHandled = false;
+
+            button.addEventListener('touchstart', function (e) {
+                touchHandled = false;
+            }, { passive: true });
+
+            button.addEventListener('touchend', function (e) {
+                if (!touchHandled) {
+                    touchHandled = true;
+                    e.stopPropagation();
+                    e.preventDefault();
+                    // 少し遅延してからアクションを実行（ポップアップが閉じるのを防ぐ）
+                    setTimeout(action, 100);
+                }
+            }, { passive: false });
+
+            // クリックイベントも処理
+            button.addEventListener('click', function (e) {
+                if (!touchHandled) {
+                    e.stopPropagation();
+                }
+            });
+        }
     });
 </script>
 {% endblock %}

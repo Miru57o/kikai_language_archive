@@ -108,7 +108,9 @@ def create_archive_map(geographic_records, speakers):
             <p><strong>種類:</strong> {content_type_display}</p>
             <p><strong>説明:</strong> {record.description}</p>
             <hr style="margin: 5px 0;">
-            <a href="{record.file_path}" target="_blank" class="btn btn-sm btn-info">表示する</a>
+            <a href="{record.file_path}" target="_blank" class="btn btn-sm btn-info geographic-detail-btn" 
+               onclick="event.stopPropagation(); return true;" 
+               ontouchend="event.stopPropagation(); return true;">表示する</a>
         </div>
         """
         marker = folium.Marker(
@@ -131,7 +133,9 @@ def create_archive_map(geographic_records, speakers):
                 <hr style="margin: 5px 0;">
                 <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> {speaker.village.name}</p>
                 
-                <a href="{detail_url}" class="btn btn-sm btn-light" target="_top" ontouchend="event.stopPropagation();onClick="event.stopPropagation();">この話者の記録を見る</a>
+                <a href="{detail_url}" class="btn btn-sm btn-light speaker-detail-btn" target="_top" 
+                   onclick="event.stopPropagation(); return true;" 
+                   ontouchend="event.stopPropagation(); return true;">この話者の記録を見る</a>
             </div>
             """
             marker = folium.Marker(
