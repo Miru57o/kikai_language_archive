@@ -78,7 +78,7 @@
             document.getElementById('yearFilter').value = year;
         }
 
-        // モバイル対応: ポップアップ内のボタンのタッチイベント処理
+        // モバイル対応: ポップアップ内のボタンのタッチイベントを処理
         setTimeout(function () {
             // 話者詳細ボタンの処理
             const speakerButtons = document.querySelectorAll('.speaker-detail-btn');
@@ -110,12 +110,11 @@
                     touchHandled = true;
                     e.stopPropagation();
                     e.preventDefault();
-                    // 少し遅延してからアクションを実行（ポップアップが閉じるのを防ぐ）
+                    // 少し遅延してからアクションを実行
                     setTimeout(action, 100);
                 }
             }, { passive: false });
 
-            // クリックイベントも処理
             button.addEventListener('click', function (e) {
                 if (!touchHandled) {
                     e.stopPropagation();

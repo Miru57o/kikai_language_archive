@@ -129,7 +129,6 @@ def create_archive_map(geographic_records, speakers):
             <div style="min-width: 200px;">
                 <h5><i class="fas fa-user" style="color: red;"></i> {speaker.speaker_id}</h5>
                 <p><strong>年代:</strong> {speaker.age_range}</p>
-                <p><strong>性別:</strong> {speaker.get_gender_display()}</p>
                 <hr style="margin: 5px 0;">
                 <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> {speaker.village.name}</p>
                 
