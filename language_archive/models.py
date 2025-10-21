@@ -95,6 +95,7 @@ class LanguageRecord(models.Model):
     # 関連情報
     speaker = models.ForeignKey(Speaker, on_delete=models.PROTECT, null=True, blank=True, verbose_name="話者")
     onomatopoeia_type = models.ForeignKey(OnomatopoeiaType, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="型")
+    village = models.ForeignKey(Village, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="関連集落")
     
     # メタデータ
     recorded_date = models.DateField(verbose_name="収録日")
