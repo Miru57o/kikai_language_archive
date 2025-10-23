@@ -77,8 +77,8 @@
                             <source src="{{ record.file_path }}">
                             お使いのブラウザは audio タグに対応していません。
                         </audio>
-                        <a href="{{ record.file_path }}" target="_blank" rel="noopener noreferrer"
-                            class="d-block small">
+                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}&disposition=inline"
+                            target="_blank" rel="noopener noreferrer" class="d-block small">
                             <i class="fas fa-external-link-alt"></i> 新しいタブで音声を開く
                         </a>
                         {% elif record.file_type == 'video' %}
@@ -86,12 +86,13 @@
                             <source src="{{ record.file_path }}">
                             お使いのブラウザは video タグに対応していません。
                         </video>
-                        <a href="{{ record.file_path }}" target="_blank" rel="noopener noreferrer"
-                            class="d-block small">
+                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}&disposition=inline"
+                            target="_blank" rel="noopener noreferrer" class="d-block small">
                             <i class="fas fa-external-link-alt"></i> 新しいタブで映像を開く
                         </a>
                         {% elif record.file_type == 'image' %}
-                        <a href="{{ record.file_path }}" target="_blank" rel="noopener noreferrer" title="新しいタブで画像を開く">
+                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}&disposition=inline"
+                            target="_blank" rel="noopener noreferrer" title="新しいタブで画像を開く">
                             <img src="{{ record.file_path }}" alt="{{ record.onomatopoeia_text }}"
                                 style="cursor: pointer;">
                         </a>
@@ -198,7 +199,7 @@
                         <strong>登録日:</strong> {{ record.created_at|date:"Y年m月d日 H:i" }}
                     </p>
                     <p class="mb-0">
-                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}"
+                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}&disposition=attachment"
                             class="btn btn-info btn-sm">
                             <i class="fas fa-download me-1"></i>ファイルをダウンロード
                         </a>

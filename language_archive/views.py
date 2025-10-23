@@ -265,31 +265,51 @@ def search_records(request):
 
 
 def download_file(request):
-    """ファイルダウンロード"""
+    """ファイルダウンロードまたはインライン表示"""
     file_url = request.GET.get('url')
-    filename = request.GET.get('filename')
-    
+    filename_base = request.GET.get('filename') # 拡張子なしのファイル名
+    disposition = request.GET.get('disposition', 'attachment') # 'attachment' or 'inline'
+
     if not file_url:
         return HttpResponse('URLが指定されていません', status=400)
-    
+
     file_url = urllib.parse.unquote(file_url)
-    if not filename:
-        parsed_url = urllib.parse.urlparse(file_url)
-        filename = os.path.basename(parsed_url.path)
-    
+
+    # 元のURLから拡張子を取得
+    try:
+        original_filename = os.path.basename(urllib.parse.urlparse(file_url).path)
+        _, extension = os.path.splitext(original_filename)
+    except Exception:
+        extension = ""
+
+    if not filename_base:
+        filename = original_filename
+    else:
+        # 渡されたfilename_baseに拡張子を追加
+        filename = f"{filename_base}{extension}"
+
     try:
         r = requests.get(file_url, stream=True)
         r.raise_for_status()
-        
+
+        content_type = r.headers.get('Content-Type', 'application/octet-stream')
+
         response = StreamingHttpResponse(
             r.iter_content(chunk_size=8192),
-            content_type=r.headers.get('Content-Type', 'application/octet-stream')
+            content_type=content_type
         )
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        
+
+        # disposition パラメータに基づいて Content-Disposition を設定
+        if disposition == 'inline':
+            response['Content-Disposition'] = f'inline; filename="{filename}"'
+        else:
+            # インライン表示 の場合
+            safe_filename = urllib.parse.quote(filename)
+            response['Content-Disposition'] = f'attachment; filename="{filename}"; filename*=UTF-8\'\'{safe_filename}'
+
         if 'Content-Length' in r.headers:
             response['Content-Length'] = r.headers['Content-Length']
-        
+
         return response
     except Exception as e:
         return HttpResponse(f'ダウンロードエラー: {e}', status=500)

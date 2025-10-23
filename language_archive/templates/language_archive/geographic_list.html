@@ -52,80 +52,92 @@
         {% for geo in geo_records %}
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100">
-                {% if geo.file_path %}
-                {# サムネイルがあればそれを使い、なければメインのファイルパスを使う #}
-                <img src="{{ geo.thumbnail_path|default:geo.file_path }}" class="card-img-top" alt="{{ geo.title }}"
+                {% if geo.content_type == 'drone_photo' or geo.content_type == 'other' %}
+                {# 画像タイプの場合 #}
+                <img src="{{geo.file_path}}" class="card-img-top" alt="{{ geo.title }}"
+                    style="height: 200px; object-fit: cover;">
+                {% elif geo.content_type == 'drone_video' %}
+                {# 動画タイプの場合 #}
+                {% if geo.thumbnail_path %}
+                <img src="{{geo.thumbnail_path}}" class="card-img-top" alt="{{ geo.title }}"
                     style="height: 200px; object-fit: cover;">
                 {% else %}
+                {# 動画でサムネイルがない場合のプレースホルダ #}
                 <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
                     style="height: 200px;">
-                    <i class="fas fa-image fa-3x text-muted"></i>
+                    <i class="fas fa-video fa-3x text-muted"></i>
                 </div>
                 {% endif %}
-
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="card-title mb-0">{{ geo.title }}</h5>
-                        <span class="badge bg-primary">
-                            {% if geo.content_type == 'drone' %}
-                            <i class="fas fa-helicopter"></i> ドローン映像
-                            {% elif geo.content_type == 'photo' %}
-                            <i class="fas fa-helicopter"></i> ドローン画像
-                            {% else %}
-                            <i class="fas fa-panorama"></i> その他
-                            {% endif %}
-                        </span>
-                    </div>
-
-                    <p class="card-text">{{ geo.description|truncatewords:15 }}</p>
-
-                    {% if geo.village %}
-                    <p class="mb-2">
-                        <small class="text-muted">
-                            <i class="fas fa-map-marker-alt"></i> {{ geo.village.name }}
-                        </small>
-                    </p>
+                {% else %}
+                {# その他のタイプの場合のプレースホルダ #}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                    style="height: 200px;">
+                    <i class="fas fa-file fa-3x text-muted"></i>
                     {% endif %}
 
-                    <p class="mb-3">
-                        <small class="text-muted">
-                            <i class="fas fa-calendar"></i> {{ geo.captured_date|date:"Y年m月d日" }}
-                        </small>
-                    </p>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">{{ geo.title }}</h5>
+                            <span class="badge bg-primary">
+                                {% if geo.content_type == 'drone_video' %}
+                                <i class="fas fa-helicopter"></i> ドローン映像
+                                {% elif geo.content_type == 'drone_photo' %}
+                                <i class="fas fa-helicopter"></i> ドローン画像
+                                {% else %}
+                                <i class="fas fa-panorama"></i> その他
+                                {% endif %}
+                            </span>
+                        </div>
 
-                    <a href="{{ geo.file_path }}" target="_blank" class="btn btn-primary w-100">
-                        <i class="fas fa-external-link-alt"></i> 表示
-                    </a>
+                        <p class="card-text">{{ geo.description|truncatewords:15 }}</p>
+
+                        {% if geo.village %}
+                        <p class="mb-2">
+                            <small class="text-muted">
+                                <i class="fas fa-map-marker-alt"></i> {{ geo.village.name }}
+                            </small>
+                        </p>
+                        {% endif %}
+
+                        <p class="mb-3">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> {{ geo.captured_date|date:"Y年m月d日" }}
+                            </small>
+                        </p>
+
+                        <a href="{{ geo.file_path }}" target="_blank" class="btn btn-primary w-100">
+                            <i class="fas fa-external-link-alt"></i> 表示
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-warning text-center">
-                <i class="fas fa-exclamation-triangle"></i>
-                地理環境データが見つかりませんでした
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    地理環境データが見つかりませんでした
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const contentTypeSelect = document.querySelector('select[name="content_type"]');
-        const villageSelect = document.querySelector('select[name="village"]');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const contentTypeSelect = document.querySelector('select[name="content_type"]');
+            const villageSelect = document.querySelector('select[name="village"]');
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedContentType = urlParams.get('content_type');
-        const selectedVillage = urlParams.get('village');
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedContentType = urlParams.get('content_type');
+            const selectedVillage = urlParams.get('village');
 
-        if (selectedContentType && contentTypeSelect) {
-            contentTypeSelect.value = selectedContentType;
-        }
+            if (selectedContentType && contentTypeSelect) {
+                contentTypeSelect.value = selectedContentType;
+            }
 
-        if (selectedVillage && villageSelect) {
-            villageSelect.value = selectedVillage;
-        }
-    });
-</script>
-{% endblock %}
+            if (selectedVillage && villageSelect) {
+                villageSelect.value = selectedVillage;
+            }
+        });
+    </script>
+    {% endblock %}
