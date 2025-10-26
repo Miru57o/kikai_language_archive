@@ -73,29 +73,17 @@
 
                     <div class="media-container text-center">
                         {% if record.file_type == 'audio' %}
-                        <audio controls class="mb-2">
+                        <audio controls class="mb-2" preload="metadata">
                             <source src="{{ record.file_path }}">
                             お使いのブラウザは audio タグに対応していません。
                         </audio>
-                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}&disposition=inline"
-                            target="_blank" rel="noopener noreferrer" class="d-block small">
-                            <i class="fas fa-external-link-alt"></i> 新しいタブで音声を開く
-                        </a>
                         {% elif record.file_type == 'video' %}
-                        <video controls class="mb-2">
+                        <video controls class="mb-2" playsinline preload="metadata">
                             <source src="{{ record.file_path }}">
                             お使いのブラウザは video タグに対応していません。
                         </video>
-                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}&disposition=inline"
-                            target="_blank" rel="noopener noreferrer" class="d-block small">
-                            <i class="fas fa-external-link-alt"></i> 新しいタブで映像を開く
-                        </a>
                         {% elif record.file_type == 'image' %}
-                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}&disposition=inline"
-                            target="_blank" rel="noopener noreferrer" title="新しいタブで画像を開く">
-                            <img src="{{ record.file_path }}" alt="{{ record.onomatopoeia_text }}"
-                                style="cursor: pointer;">
-                        </a>
+                        <img src="{{ record.file_path }}" alt="{{ record.onomatopoeia_text }}" style="cursor: pointer;">
                         {% endif %}
                     </div>
 
@@ -198,15 +186,66 @@
                     <p class="mb-2">
                         <strong>登録日:</strong> {{ record.created_at|date:"Y年m月d日 H:i" }}
                     </p>
-                    <p class="mb-0">
-                        <a href="{% url 'download_file' %}?url={{ record.file_path|urlencode }}&filename={{ record.onomatopoeia_text }}&disposition=attachment"
-                            class="btn btn-info btn-sm">
-                            <i class="fas fa-download me-1"></i>ファイルをダウンロード
-                        </a>
-                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // モバイルでの動画再生を最適化
+        const videos = document.querySelectorAll('video');
+        videos.forEach(function (video) {
+            // iOS Safariでの動画再生を最適化
+            video.setAttribute('playsinline', 'true');
+
+            // 動画の読み込みエラーを処理
+            video.addEventListener('error', function (e) {
+                console.log('動画の読み込みエラー:', e);
+                // エラーが発生した場合は別タブで開くリンクを表示
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-warning mt-2';
+                errorDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i> 
+                動画の再生に問題があります。
+                <a href="${video.querySelector('source').src}" target="_blank" class="btn btn-sm btn-warning ms-2">
+                    <i class="fas fa-external-link-alt"></i> 別タブで開く
+                </a>
+            `;
+                video.parentNode.insertBefore(errorDiv, video.nextSibling);
+            });
+
+            // 動画の読み込み開始
+            video.addEventListener('loadstart', function () {
+                console.log('動画の読み込み開始');
+            });
+
+            // 動画の読み込み完了
+            video.addEventListener('canplay', function () {
+                console.log('動画の再生準備完了');
+            });
+        });
+
+        // 音声の読み込みエラーを処理
+        const audios = document.querySelectorAll('audio');
+        audios.forEach(function (audio) {
+            audio.addEventListener('error', function (e) {
+                console.log('音声の読み込みエラー:', e);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-warning mt-2';
+                errorDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i> 
+                音声の再生に問題があります。
+                <a href="${audio.querySelector('source').src}" target="_blank" class="btn btn-sm btn-warning ms-2">
+                    <i class="fas fa-external-link-alt"></i> 別タブで開く
+                </a>
+            `;
+                audio.parentNode.insertBefore(errorDiv, audio.nextSibling);
+            });
+        });
+    });
+</script>
 {% endblock %}

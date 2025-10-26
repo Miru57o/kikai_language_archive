@@ -50,11 +50,7 @@ urlpatterns = [
     
     # API
     path('api/village/<int:village_id>/records/', views.get_village_records_api, name='api_village_records'),
-    
-    # ファイルダウンロード
-    path('download/', views.download_file, name='download_file'),
 ]
-
 # 開発環境でのメディアファイル配信
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

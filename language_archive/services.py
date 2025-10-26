@@ -5,6 +5,7 @@ import requests
 from pathlib import Path
 import uuid
 from django.urls import reverse
+import mimetypes 
 
 def upload_to_supabase(file, bucket_name, file_prefix=""):
     """
@@ -30,6 +31,14 @@ def upload_to_supabase(file, bucket_name, file_prefix=""):
     
     # ファイルをアップロード
     file_bytes = file.read()
+
+    # file.content_typeがNoneの場合に備えて、mimetypesで推測
+    content_type, _ = mimetypes.guess_type(file.name)
+    if not file.content_type and content_type:
+        file.content_type = content_type
+
+    if not file.content_type:
+        file.content_type = 'application/octet-stream'  # デフォルトのMIMEタイプ
     
     # Supabase Storage APIエンドポイント
     upload_url = f"{supabase_url}/storage/v1/object/{bucket_name}/{storage_file_name}"
