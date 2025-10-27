@@ -152,23 +152,30 @@ def upload_geographic_record(request):
 def record_list(request):
     """言語記録一覧"""
     records = LanguageRecord.objects.select_related(
-        'speaker', 'onomatopoeia_type'
+        'speaker', 'onomatopoeia_type', 'village'
     ).all()
     
     # フィルタリング
     village_id = request.GET.get('village')
     file_type = request.GET.get('file_type')
+    onomatopoeia_type_code = request.GET.get('onomatopoeia_type')
     
     if village_id:
         records = records.filter(speaker__village_id=village_id)
     if file_type:
         records = records.filter(file_type=file_type)
+    if onomatopoeia_type_code:
+        records = records.filter(onomatopoeia_type__type_code=onomatopoeia_type_code)
     
-    villages = Village.objects.all()
+    village_ids_with_records = LanguageRecord.objects.filter(speaker__village__isnull=False).values_list('speaker__village_id', flat=True).distinct()
+    villages = Village.objects.filter(id__in=village_ids_with_records).order_by('-name')
+
+    onomatopoeia_types = OnomatopoeiaType.objects.all()
     
     context = {
         'records': records,
         'villages': villages,
+        'onomatopoeia_types': onomatopoeia_types,
     }
     return render(request, 'language_archive/record_list.html', context)
 

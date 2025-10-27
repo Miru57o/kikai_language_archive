@@ -72,6 +72,15 @@
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
+                    <label class="form-label">形態で絞り込み</label>
+                    <select name="onomatopoeia_type" class="form-select" onchange="this.form.submit()">
+                        <option value="">すべての形態</option>
+                        {% for onomatopoeia_type in onomatopoeia_types %}
+                        <option value="{{ onomatopoeia_type.type_code }}">{{ onomatopoeia_type.type_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
                     <label class="form-label">&nbsp;</label>
                     <a href="{% url 'record_list' %}" class="btn btn-outline-secondary w-100">
                         <i class="fas fa-redo"></i> フィルターをクリア
