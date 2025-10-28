@@ -71,6 +71,7 @@
                             <p class="mb-2"><strong>クリックしてファイルを選択</strong></p>
                             <p class="small text-muted">または、ここにファイルをドラッグ＆ドロップ</p>
                             <p class="small text-muted">対応形式: 音声(mp3, wav), 映像(mp4, mov), 画像(jpg, png)</p>
+                            <p class="small text-danger"><strong>※ファイル名は半角英数字、ハイフン(-)、アンダースコア(_)のみにしてください</strong></p>
                         </div>
                         <input type="file" name="file" id="id_file" class="d-none" required>
                         <div id="fileInfo" class="mt-2"></div>
@@ -195,6 +196,21 @@
     const fileUploadArea = document.getElementById('fileUploadArea');
     const fileInfo = document.getElementById('fileInfo');
 
+    // 追加：送信ボタンの参照
+    const submitButton = document.querySelector('button[type="submit"]');
+
+    // 追加：ファイル名を検証する正規表現 
+    const FILENAME_REGEX = /^[a-zA-Z0-9_.-]+$/;
+
+    // 追加：ファイル名検証関数
+    function validateFilename(file) {
+        if (!FILENAME_REGEX.test(file.name)) {
+            return false;
+        }
+        return true;
+    }
+
+
     // ファイル選択時
     fileInput.addEventListener('change', function (e) {
         const file = e.target.files[0];
@@ -227,25 +243,51 @@
 
     // ファイル情報を表示
     function displayFileInfo(file) {
-        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-        fileInfo.innerHTML = `
+        // ★ 修正：ファイル名検証
+                if (!validateFilename(file)) {
+                    fileInfo.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-times-circle"></i>
+                    <strong>ファイル名エラー:</strong> ${file.name}<br>
+                    <small>ファイル名は半角英数字、ハイフン(-)、アンダースコア(_)、ドット(.)のみにしてください。</small>
+                </div>
+            `;
+                    // ファイル入力をクリア
+                    fileInput.value = "";
+                    // 送信ボタンを無効化
+                    submitButton.disabled = true;
+
+                    // エリアのスタイルをリセット
+                    fileUploadArea.style.background = 'rgba(151, 192, 92, 0.05)';
+                    fileUploadArea.style.borderColor = 'var(--secondary-color)';
+
+                    return; // 処理を中断
+                }
+
+                // (検証OKの場合)
+                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                fileInfo.innerHTML = `
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i>
                 <strong>${file.name}</strong> (${sizeMB} MB)
             </div>
         `;
 
-        // ファイルアップロードエリアのスタイルを変更
-        fileUploadArea.style.background = 'rgba(40, 167, 69, 0.1)';
-        fileUploadArea.style.borderColor = '#28a745';
-    }
+                // ファイルアップロードエリアのスタイルを変更
+                fileUploadArea.style.background = 'rgba(40, 167, 69, 0.1)';
+                fileUploadArea.style.borderColor = '#28a745';
 
-    // フォーム送信時のローディング
-    document.getElementById('uploadForm').addEventListener('submit', function (e) {
-        const btn = this.querySelector('button[type="submit"]');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>アップロード中...';
-    });
+                // 送信ボタンを有効化 (無効化されていた場合のため)
+                submitButton.disabled = false;
+            }
+
+            // フォーム送信時のローディング
+            document.getElementById('uploadForm').addEventListener('submit', function (e) {
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>アップロード中...';
+                }
+            });
 
 </script>
 {% endblock %}

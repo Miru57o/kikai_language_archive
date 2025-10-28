@@ -204,7 +204,9 @@ def geographic_list(request):
     if village_id:
         geo_records = geo_records.filter(village_id=village_id)
     
-    villages = Village.objects.all()
+    village_ids_with_records = LanguageRecord.objects.filter(village__isnull=False).values_list('village_id', flat=True).distinct()
+    villages = Village.objects.filter(id__in=village_ids_with_records).order_by('-name')
+
     
     context = {
         'geo_records': geo_records,

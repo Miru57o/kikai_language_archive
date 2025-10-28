@@ -6,6 +6,32 @@ from pathlib import Path
 import uuid
 from django.urls import reverse
 import mimetypes 
+import re  # サニタイズのために追加
+
+def sanitize_filename(filename):
+    """
+    ファイル名から危険な文字（パス トラバーサルなど）や
+    URL/ファイルシステムで問題を起こす可能性のある文字を除去し、
+    半角英数字、ハイフン、アンダースコア、ドットに制限する。
+    スペースはアンダースコアに置換する。
+    """
+    # スペースをアンダースコアに置換
+    filename = filename.replace(" ", "_")
+    
+    # 許可する文字以外を削除
+    # \w は [a-zA-Z0-9_] に相当
+    filename = re.sub(r'[^\w.-]', '', filename)
+    
+    # 連続するドットやアンダースコアを一つにまとめる
+    filename = re.sub(r'[_.-]{2,}', '_', filename)
+    
+    # 先頭のドットやハイフンを削除（.ssh のような隠しファイル化を防ぐ）
+    filename = filename.lstrip('._-')
+    
+    # ファイル名が空になった場合のフォールバック
+    if not filename:
+        return f"file_{uuid.uuid4()}" # 万が一空になったらUUIDを付与
+    return filename
 
 def upload_to_supabase(file, bucket_name, file_prefix=""):
     """
@@ -25,9 +51,14 @@ def upload_to_supabase(file, bucket_name, file_prefix=""):
     if not supabase_url or not supabase_key:
         raise Exception("Supabase環境変数が設定されていません")
     
-    # ユニークなファイル名を生成
-    extension = Path(file.name).suffix
-    storage_file_name = f"{file_prefix}{uuid.uuid4()}{extension}"
+    # 元のファイル名を Path オブジェクトの .name 属性から取得
+    original_filename = Path(file.name).name
+    
+    # ファイル名をサニタイズ
+    safe_filename = sanitize_filename(original_filename)
+    
+    # Prefixと安全なファイル名を結合
+    storage_file_name = f"{file_prefix}{safe_filename}"
     
     # ファイルをアップロード
     file_bytes = file.read()
